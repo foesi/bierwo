@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Neues Fass{% endblock %}
+{% block content %}
+<div class="container">
+<form method="POST" action="{{ url_for(".create_keg") }}">
+    {{ form.csrf_token }}
+<div class="mb-3">
+    {{ form.name.label(class="form-label") }}
+    {{ form.name(class="form-control") }}
+</div>
+<div class="mb-3">
+    {{ form.size.label(class="form-label") }}
+    {{ form.size(class="form-control") }}
+</div>
+    <button type="submit" class="btn btn-primary">Erstellen</button>
+</form>
+</div>
+{% endblock %}

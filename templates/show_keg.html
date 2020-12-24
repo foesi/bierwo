@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Fass - {{ keg.name }}{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="d-grid gap-2 d-md-block p-4">
+        <a class="btn btn-primary btn-lg {% if not keg.empty %}disabled{% endif %}" href="{{ url_for(".fill_keg", keg_id=keg.id) }}" role="button">Füllen</a>
+        <a class="btn btn-primary btn-lg {% if keg.empty %}disabled{% endif %}" href="{{ url_for(".empty_keg", keg_id=keg.id) }}" role="button">Leeren</a>
+        <a class="btn btn-primary btn-lg" href="{{ url_for(".create_keg") }}" role="button">Kommentar</a>
+    </div>
+    <div class="row p-1">
+        <div class="col-sm-8">
+            <dl class="row">
+                <div class="row">
+                    <dt class="col-sm-2">Inhalt</dt>
+                    <dd class="col-sm-4">{{ keg|last_beer }}</dd>
+                </div>
+                <div class="row">
+                    <dt class="col-sm-2">Ort</dt>
+                    <dd class="col-sm-4">{{ keg|last_location }}</dd>
+                </div>
+                <div class="row">
+                    <dt class="col-sm-2">Name</dt>
+                    <dd class="col-sm-4">{{ keg.name }}</dd>
+                </div>
+                <div class="row">
+                    <dt class="col-sm-2">Volumen</dt>
+                    <dd class="col-sm-4">{{ keg.size }}</dd>
+                </div>
+                <div class="row">
+                    <dt class="col-sm-2 ">Kommentar</dt>
+                    <dd class="col-sm-4 ">{{ keg.comment }}</dd>
+                </div>
+            </dl>
+        </div>
+        <div class="col-sm-1">
+            <div class="row"><img src="{{ url_for("static", filename="qrcodes/1.jpg") }}" class="img-fluid rounded" alt="QR Code für Fass {{ keg.name }}"></div>
+            <div class="row" style="float: center"><a class="btn btn-secondary btn-sm" href="{{ url_for(".regenerate_qrcode", keg_id=keg.id) }}" role="button">QRCode generieren</a></div>
+        </div>
+    </div>
+    <div class="row p-1">
+        <div class="col">
+            <table class="table">
+                <thead>
+                    <td>Bier</td>
+                    <td>Abfülldatum</td>
+                </thead>
+                {% for filling in keg.fillings %}
+                <tr>
+                    <td>{{ filling.brew.name }}</td>
+                    <td>{{ filling.date.strftime('%d.%m.%Y') }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="col">
+            <table class="table">
+                <thead>
+                    <td>Datum</td>
+                    <td>Ort</td>
+                    <td>Kommentar</td>
+                </thead>
+                {% for comment in keg.keg_comments %}
+                <tr>
+                    <td>{{ comment.date.strftime('%H:%M Uhr %d.%m.%Y') }}</td>
+                    <td>{{ comment.location }}</td>
+                    <td>{{ comment.comment }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

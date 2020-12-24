@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Brauungen{% endblock %}
+{% block content %}
+<div class="container p-4"><a class="btn btn-primary" href="{{ url_for(".create_brew") }}" role="button">Neue Brauung</a></div>
+<div class="container">
+<table class="table">
+    <thead>
+        <td>Name</td>
+        <td>Brautag</td>
+        <td>Menge</td>
+    </thead>
+    {% for brew in brews %}
+    <tr>
+        <td>{{ brew.name}}</td>
+        <td>{{ brew.date.strftime('%d.%m.%Y') }}</td>
+        <td>{{ brew.size}}</td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+{% endblock %}

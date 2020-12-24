@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Neues Fass{% endblock %}
+{% block content %}
+<div class="container">
+<form method="POST" action="{{ url_for(".fill_keg", keg_id=keg_id) }}">
+    {{ form.csrf_token }}
+<div class="mb-3">
+    {{ form.brew_id.label(class="form-label") }}
+    {{ form.brew_id(class="form-control") }}
+</div>
+<div class="mb-3">
+    {{ form.date.label(class="form-label") }}
+    {{ form.date(class="form-control") }}
+</div>
+    <button type="submit" class="btn btn-primary">Füllen</button>
+</form>
+</div>
+{% endblock %}

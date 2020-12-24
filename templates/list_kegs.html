@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Fässer{% endblock %}
+{% block content %}
+<div class="container p-4"><a class="btn btn-primary" href="{{ url_for(".create_keg") }}" role="button">Neues Fass</a></div>
+<div class="container">
+    <h3>Volle Fässer</h3>
+<table class="table">
+    <thead>
+        <td>Bier</td>
+        <td>Menge</td>
+        <td>Ort</td>
+        <td>Fass</td>
+    </thead>
+    {% for keg in kegs %}
+    <tr>
+        <td>{{ keg|last_beer }}</td>
+        <td>{{ keg.size }}</td>
+        <td>{{ keg|last_location }}</td>
+        <td><a href="{{ url_for(".show_keg", keg_id=keg.id) }}">{{ keg.name }}</a></td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+<div class="container">
+    <h3>Leere Fässer</h3>
+<table class="table">
+    <thead>
+        <td>Volumen</td>
+        <td>Ort</td>
+        <td>Fass</td>
+    </thead>
+    {% for keg in empty_kegs %}
+    <tr>
+        <td>{{ keg.size }}</td>
+        <td>{{ keg|last_location }}</td>
+        <td><a href="{{ url_for(".show_keg", keg_id=keg.id) }}">{{ keg.name }}</a></td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+{% endblock %}
