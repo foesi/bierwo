@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, DateField, SelectField
+from wtforms import StringField, IntegerField, DateField, SelectField, TextAreaField
 
 __author__ = 'Florian Österreich'
 
@@ -18,3 +18,8 @@ class CreateBrew(FlaskForm):
 class FillKeg(FlaskForm):
     brew_id = SelectField(u"Sud", coerce=int)
     date = DateField(u"Abfülldatum", format='%d.%m.%Y')
+
+
+class CommentKeg(FlaskForm):
+    location = StringField(u"Ort")
+    comment = TextAreaField(u"Kommentar")

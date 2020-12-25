@@ -1,6 +1,6 @@
 from flask import Flask, render_template, url_for, request
-from models import engine, Keg, Brew, Filling
-from forms import CreateKeg, CreateBrew, FillKeg
+from models import engine, Keg, Brew, Filling, KegComment
+from forms import CreateKeg, CreateBrew, FillKeg, CommentKeg
 from sqlalchemy.orm import sessionmaker, scoped_session
 from werkzeug.utils import redirect
 import qrcode
@@ -78,6 +78,24 @@ def create_keg():
         generate_qrcode(new_keg.id)
         return redirect(url_for("list_kegs"))
     return render_template("create_keg.html", form=form)
+
+
+@app.route("/kegs/comment/create/<int:keg_id>", methods=["GET", "POST"])
+def create_keg_comment(keg_id):
+    form = CommentKeg()
+    if form.validate_on_submit():
+        new_comment = KegComment()
+        new_comment.location = form.location.data
+        new_comment.comment = form.comment.data
+        new_comment.timestamp = datetime.datetime.now()
+        new_comment.keg_id = keg_id
+        session.add(new_comment)
+        session.commit()
+        return redirect(url_for("show_keg", keg_id=keg_id))
+    else:
+        keg = session.query(Keg).filter_by(id=keg_id).one()
+        form.location.data = last_location_filter(keg)
+    return render_template("create_keg_comment.html", form=form, keg_id=keg_id)
 
 
 @app.route("/kegs/fill/<int:keg_id>", methods=["GET", "POST"])

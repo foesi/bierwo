@@ -76,4 +76,4 @@ class KegComment(Base):
     location = Column(String, nullable=False)
     comment = Column(Text, nullable=False)
 
-    keg_id = Column("keg_id", Integer, ForeignKey('kegs.id'))
+    keg_id = Column("keg_id", Integer, ForeignKey('kegs.id'), nullable=False)

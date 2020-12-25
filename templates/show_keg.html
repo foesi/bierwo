@@ -5,7 +5,7 @@
     <div class="d-grid gap-2 d-md-block p-4">
         <a class="btn btn-primary btn-lg {% if not keg.empty %}disabled{% endif %}" href="{{ url_for(".fill_keg", keg_id=keg.id) }}" role="button">Füllen</a>
         <a class="btn btn-primary btn-lg {% if keg.empty %}disabled{% endif %}" href="{{ url_for(".empty_keg", keg_id=keg.id) }}" role="button">Leeren</a>
-        <a class="btn btn-primary btn-lg" href="{{ url_for(".create_keg") }}" role="button">Kommentar</a>
+        <a class="btn btn-primary btn-lg" href="{{ url_for(".create_keg_comment", keg_id=keg.id) }}" role="button">Kommentar</a>
     </div>
     <div class="row p-1">
         <div class="col-sm-8">

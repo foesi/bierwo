@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Neuer Kommentar{% endblock %}
+{% block content %}
+<div class="container">
+<form method="POST" action="{{ url_for(".create_keg_comment", keg_id=keg_id) }}">
+    {{ form.csrf_token }}
+<div class="mb-3">
+    {{ form.location.label(class="form-label") }}
+    {{ form.location(class="form-control") }}
+</div>
+<div class="mb-3">
+    {{ form.comment.label(class="form-label") }}
+    {{ form.comment(class="form-control") }}
+</div>
+    <button type="submit" class="btn btn-primary">Erstellen</button>
+</form>
+</div>
+{% endblock %}
