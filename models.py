@@ -10,7 +10,7 @@ __author__ = 'Florian Österreich'
 
 DB_STRING = "postgresql+psycopg2" + os.getenv("DATABASE_URL")[8:] if len(os.getenv("DATABASE_URL", default=[])) > 0 else 'sqlite:///test.db'
 
-engine = create_engine()
+engine = create_engine(DB_STRING)
 
 Base = declarative_base()
 
