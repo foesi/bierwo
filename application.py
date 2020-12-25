@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, request
 from models import engine, Keg, Brew, Filling
 from forms import CreateKeg, CreateBrew, FillKeg
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -41,8 +41,8 @@ def last_location_filter(value):
 
 
 def generate_qrcode(keg_id):
-    img = qrcode.make(url_for("show_keg", keg_id=keg_id))
-    img.save("static/qrcodes/" + str(keg_id) + ".jpg", "JPEG")
+    img = qrcode.make(request.host_url + url_for("show_keg", keg_id=keg_id))
+    img.save("/static/qrcodes/" + str(keg_id) + ".jpg", "JPEG")
 
 
 @app.route("/")
