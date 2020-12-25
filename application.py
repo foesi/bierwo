@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for
 from models import engine, Keg, Brew, Filling
 from forms import CreateKeg, CreateBrew, FillKeg
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 from werkzeug.utils import redirect
 import qrcode
 import datetime
@@ -13,8 +13,13 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'geheim'
 app.config['DEBUG'] = True
 
-Session = sessionmaker(engine)
-session = Session()
+session = scoped_session(sessionmaker(engine))
+
+
+@app.teardown_request
+def remove_session(ex=None):
+    session.remove()
+
 
 @app.template_filter("last_beer")
 def last_beer_filter(value):
