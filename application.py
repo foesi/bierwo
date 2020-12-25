@@ -83,9 +83,6 @@ def create_keg():
 @app.route("/kegs/fill/<int:keg_id>", methods=["GET", "POST"])
 def fill_keg(keg_id):
     form = FillKeg()
-    form.date.data = datetime.datetime.now()
-    brews = session.query(Brew).order_by(Brew.date.desc())
-    form.brew_id.choices = [(b.id, "%s (%s)" % (b.name, b.date.strftime('%d.%m.%Y'))) for b in brews]
     if form.validate_on_submit():
         new_filling = Filling()
         new_filling.keg_id = keg_id
@@ -96,6 +93,10 @@ def fill_keg(keg_id):
         session.add(new_filling)
         session.commit()
         return redirect(url_for("show_keg", keg_id=keg_id))
+    else:
+        form.date.data = datetime.datetime.now()
+        brews = session.query(Brew).order_by(Brew.date.desc())
+        form.brew_id.choices = [(b.id, "%s (%s)" % (b.name, b.date.strftime('%d.%m.%Y'))) for b in brews]
     return render_template("fill_keg.html", form=form, keg_id=keg_id)
 
 
