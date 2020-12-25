@@ -41,7 +41,7 @@ def last_location_filter(value):
 
 
 def generate_qrcode(keg_id):
-    img = qrcode.make(request.host_url + url_for("show_keg", keg_id=keg_id))
+    img = qrcode.make(request.host_url[:-1] + url_for("show_keg", keg_id=keg_id))
     img.save("static/qrcodes/" + str(keg_id) + ".jpg", "JPEG")
 
 
