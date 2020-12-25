@@ -5,13 +5,14 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from werkzeug.utils import redirect
 import qrcode
 import datetime
+import os
 
 __author__ = 'Florian Österreich'
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'geheim'
-app.config['DEBUG'] = True
+
+app.config['SECRET_KEY'] = os.getenv("SECRET") if len(os.getenv("SECRET", default=[])) > 0 else 'geheim'
 
 session = scoped_session(sessionmaker(engine))
 

@@ -3,11 +3,14 @@ from sqlalchemy import create_engine, Column, Date, Float, Integer, String, Text
 from sqlalchemy.ext.declarative import declarative_base
 import enum
 import datetime
+import os
 
 __author__ = 'Florian Österreich'
 
 
-engine = create_engine('sqlite:///test.db')
+DB_STRING = "postgresql+psycopg2" + os.getenv("DATABASE_URL")[8:] if len(os.getenv("DATABASE_URL", default=[])) > 0 else 'sqlite:///test.db'
+
+engine = create_engine()
 
 Base = declarative_base()
 
