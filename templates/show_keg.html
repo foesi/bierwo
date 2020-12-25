@@ -33,7 +33,7 @@
             </dl>
         </div>
         <div class="col-sm-1">
-            <div class="row"><img src="{{ url_for("static", filename="qrcodes/1.jpg") }}" class="img-fluid rounded" alt="QR Code für Fass {{ keg.name }}"></div>
+            <div class="row"><img src="{{ url_for("static", filename="qrcodes/"+ keg.id|string + ".jpg") }}" class="img-fluid rounded" alt="QR Code für Fass {{ keg.name }}"></div>
             <div class="row" style="float: center"><a class="btn btn-secondary btn-sm" href="{{ url_for(".regenerate_qrcode", keg_id=keg.id) }}" role="button">QRCode generieren</a></div>
         </div>
     </div>
