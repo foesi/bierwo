@@ -61,7 +61,7 @@
                 </thead>
                 {% for comment in keg.keg_comments %}
                 <tr>
-                    <td>{{ comment.date.strftime('%H:%M Uhr %d.%m.%Y') }}</td>
+                    <td>{{ comment.timestamp.strftime('%H:%M Uhr %d.%m.%Y') }}</td>
                     <td>{{ comment.location }}</td>
                     <td>{{ comment.comment }}</td>
                 </tr>

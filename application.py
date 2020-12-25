@@ -33,7 +33,7 @@ def last_beer_filter(value):
 
 @app.template_filter("last_location")
 def last_location_filter(value):
-    last_comment = sorted(value.keg_comments, key=lambda b: b.date, reverse=True)
+    last_comment = sorted(value.keg_comments, key=lambda b: b.timestamp, reverse=True)
     return last_comment[0].location if last_comment is not None and len(last_comment) > 0 else "Keller"
 
 
