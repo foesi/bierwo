@@ -4,7 +4,7 @@
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 
-static/qrcodes
+static/qrcodes/*.jpg
 test.db
 __pycache__
 .idea
