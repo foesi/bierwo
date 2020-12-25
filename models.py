@@ -62,6 +62,7 @@ class Keg(Base):
     type = Column(Enum(KeyType))
     size = Column(Integer, nullable=False)
     empty = Column(Boolean, default=True, nullable=False)
+    deprecated = Column(Boolean, default=False, nullable=False)
     comment = Column(Text)
 
     keg_comments = relationship("KegComment")
