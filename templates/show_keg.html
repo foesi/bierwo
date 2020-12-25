@@ -44,7 +44,7 @@
                     <td>Bier</td>
                     <td>Abfülldatum</td>
                 </thead>
-                {% for filling in keg.fillings %}
+                {% for filling in keg.fillings|reverse %}
                 <tr>
                     <td>{{ filling.brew.name }}</td>
                     <td>{{ filling.date.strftime('%d.%m.%Y') }}</td>
@@ -59,7 +59,7 @@
                     <td>Ort</td>
                     <td>Kommentar</td>
                 </thead>
-                {% for comment in keg.keg_comments %}
+                {% for comment in keg.keg_comments|reverse %}
                 <tr>
                     <td>{{ comment.timestamp.strftime('%H:%M Uhr %d.%m.%Y') }}</td>
                     <td>{{ comment.location }}</td>
