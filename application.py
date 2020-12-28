@@ -22,13 +22,23 @@ def remove_session(ex=None):
     session.remove()
 
 
+@app.template_filter("last_filling")
+def last_filling_filter(value):
+    if len(value.fillings) > 0:
+        last_filling = sorted(value.fillings, key=lambda b: b.id, reverse=True)[0]
+        return last_filling
+    return None
+
+
 @app.template_filter("last_beer")
 def last_beer_filter(value):
-    if not value.empty:
-        last_filling = sorted(value.fillings, key=lambda b: b.id, reverse=True)[0]
-        return last_filling.brew.name
-
-    return "Leer"
+    last_filling = last_filling_filter(value)
+    if last_filling is not None:
+        if not last_filling.empty:
+            return last_filling.brew.name
+        else:
+            return "leer"
+    return "leer"
 
 
 @app.template_filter("last_location")
@@ -49,9 +59,8 @@ def main():
 
 @app.route("/kegs/list")
 def list_kegs():
-    kegs = session.query(Keg).filter(Keg.empty == False).all()
-    empty_kegs = session.query(Keg).filter(Keg.empty).all()
-    return render_template("list_kegs.html", kegs=kegs, empty_kegs=empty_kegs)
+    kegs = session.query(Keg).all()
+    return render_template("list_kegs.html", kegs=kegs)
 
 
 @app.route("/kegs/show/<int:keg_id>")
@@ -121,7 +130,8 @@ def fill_keg(keg_id):
 @app.route("/kegs/empty/<int:keg_id>")
 def empty_keg(keg_id):
     keg = session.query(Keg).filter_by(id=keg_id).one()
-    keg.empty = True
+    for filling in keg.fillings:
+        filling.empty = True
     session.commit()
     return redirect(url_for("show_keg", keg_id=keg_id))
 

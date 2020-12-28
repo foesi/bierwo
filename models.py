@@ -33,6 +33,8 @@ class Filling(Base):
 
     date = Column(Date, nullable=False)
 
+    empty = Column(Boolean, default=False, nullable=False)
+
     brew_id = Column('brew_id', Integer, ForeignKey('brews.id'))
     keg_id = Column('keg_id', Integer, ForeignKey('kegs.id'))
 
@@ -61,7 +63,6 @@ class Keg(Base):
     name = Column(String, unique=True, nullable=False)
     type = Column(Enum(KeyType))
     size = Column(Integer, nullable=False)
-    empty = Column(Boolean, default=True, nullable=False)
     deprecated = Column(Boolean, default=False, nullable=False)
     comment = Column(Text)
 

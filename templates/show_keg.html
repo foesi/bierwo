@@ -3,8 +3,8 @@
 {% block content %}
 <div class="container">
     <div class="d-grid gap-2 d-md-block p-4">
-        <a class="btn btn-primary btn-lg {% if not keg.empty %}disabled{% endif %}" href="{{ url_for(".fill_keg", keg_id=keg.id) }}" role="button">Füllen</a>
-        <a class="btn btn-primary btn-lg {% if keg.empty %}disabled{% endif %}" href="{{ url_for(".empty_keg", keg_id=keg.id) }}" role="button">Leeren</a>
+        <a class="btn btn-primary btn-lg {% if keg|last_filling is not none and not (keg|last_filling).empty %}disabled{% endif %}" href="{{ url_for(".fill_keg", keg_id=keg.id) }}" role="button">Füllen</a>
+        <a class="btn btn-primary btn-lg {% if keg|last_filling is none or (keg|last_filling).empty %}disabled{% endif %}" href="{{ url_for(".empty_keg", keg_id=keg.id) }}" role="button">Leeren</a>
         <a class="btn btn-primary btn-lg" href="{{ url_for(".create_keg_comment", keg_id=keg.id) }}" role="button">Kommentar</a>
     </div>
     <div class="row p-1">

@@ -12,12 +12,14 @@
         <td>Fass</td>
     </thead>
     {% for keg in kegs %}
+    {% if keg|last_filling is not none and (keg|last_filling).empty == False %}
     <tr>
         <td>{{ keg|last_beer }}</td>
         <td>{{ keg.size }}</td>
         <td>{{ keg|last_location }}</td>
         <td><a href="{{ url_for(".show_keg", keg_id=keg.id) }}">{{ keg.name }}</a></td>
     </tr>
+    {% endif %}
     {% endfor %}
 </table>
 </div>
@@ -29,12 +31,14 @@
         <td>Ort</td>
         <td>Fass</td>
     </thead>
-    {% for keg in empty_kegs %}
+    {% for keg in kegs %}
+    {% if keg|last_filling is none or (keg|last_filling).empty == True %}
     <tr>
         <td>{{ keg.size }}</td>
         <td>{{ keg|last_location }}</td>
         <td><a href="{{ url_for(".show_keg", keg_id=keg.id) }}">{{ keg.name }}</a></td>
     </tr>
+    {% endif %}
     {% endfor %}
 </table>
 </div>
