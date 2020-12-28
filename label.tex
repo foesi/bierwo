@@ -1,0 +1,30 @@
+\documentclass[a4paper,12pt]{article}
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand*\sfdefault{ugq}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage[newdimens]{labels}
+\LabelCols=3%             Number of columns of labels per page
+\LabelRows=3%             Number of rows of labels per page
+\LeftPageMargin=7mm%      These four parameters give the
+\RightPageMargin=7mm%       page gutter sizes.  The outer edges of
+\TopPageMargin=15mm%        the outer labels are the specified
+\BottomPageMargin=15mm%     distances from the edge of the paper.
+\InterLabelColumn=2mm%    Gap between columns of labels4
+\InterLabelRow=0mm%       Gap between rows of labels
+\LeftLabelBorder=5mm%     These four parameters give the extra
+\RightLabelBorder=5mm%      space used around the text on each
+\TopLabelBorder=5mm%        actual label.
+\BottomLabelBorder=5mm%
+\begin{document}%
+\LARGE
+\begin{labels}
+{% for keg in kegs %}
+\begin{center}
+{{ keg.name }}
+{% raw %}\includegraphics[width=5cm, height=5cm]{{% endraw %}{{ keg.id }}.jpg}
+\end{center}
+
+{% endfor %}
+\end{labels}
+\end{document}

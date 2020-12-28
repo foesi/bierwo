@@ -1,11 +1,14 @@
-from flask import Flask, render_template, url_for, request
+from flask import Flask, render_template, url_for, request, make_response
 from models import engine, Keg, Brew, Filling, KegComment
 from forms import CreateKeg, CreateBrew, FillKeg, CommentKeg
 from sqlalchemy.orm import sessionmaker, scoped_session
 from werkzeug.utils import redirect
+from jinja2 import Template
 import qrcode
 import datetime
 import os
+import tempfile
+import subprocess
 
 __author__ = 'Florian Österreich'
 
@@ -47,9 +50,9 @@ def last_location_filter(value):
     return last_comment[0].location if last_comment is not None and len(last_comment) > 0 else "Keller"
 
 
-def generate_qrcode(keg_id):
+def generate_qrcode(keg_id, path="static/qrcodes/"):
     img = qrcode.make(request.host_url[:-1] + url_for("show_keg", keg_id=keg_id))
-    img.save("static/qrcodes/" + str(keg_id) + ".jpg", "JPEG")
+    img.save(os.path.join(path, str(keg_id) + ".jpg"), "JPEG")
 
 
 @app.route("/")
@@ -160,3 +163,21 @@ def create_brew():
 def show_brew(brew_id):
     brew = session.query(Brew).filter_by(id=brew_id).one()
     return render_template("show_brew.html", brew=brew)
+
+
+@app.route("/kegs/qrcode/print")
+def print_qrcodes():
+    kegs = session.query(Keg).all()
+    temp_dir = tempfile.mkdtemp()
+    for keg in kegs:
+        generate_qrcode(keg.id, path=temp_dir)
+    with open("label.tex") as f:
+        template = Template(f.read())
+        with open(os.path.join(temp_dir, "label.tex"), "w+") as wf:
+            wf.write(template.render(kegs=kegs))
+    subprocess.run(["pdflatex", "label.tex"], cwd=temp_dir)
+    with open(os.path.join(temp_dir, "label.pdf"), "rb") as pdf:
+        response = make_response(pdf.read())
+        response.headers.set('Content-Disposition', 'attachment', filename="labels.pdf")
+        response.headers.set('Content-Type', 'application/pdf')
+        return response
