@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}{{ brew.name }} ({{ brew.date.strftime('%d.%m.%Y')}}){% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row p-1">
+        <div class="col-sm-8">
+            <dl class="row">
+                <div class="row">
+                    <dt class="col-sm-2">Name</dt>
+                    <dd class="col-sm-4">{{ brew|last_beer }}</dd>
+                </div>
+                <div class="row">
+                    <dt class="col-sm-2">Brautag</dt>
+                    <dd class="col-sm-4">{{ brew.date.strftime('%d.%m.%Y') }}</dd>
+                </div>
+                <div class="row">
+                    <dt class="col-sm-2">Infromationen</dt>
+                    <dd class="col-sm-4">{{ brew.comment }}</dd>
+                </div>
+                <div class="row">
+                    <dt class="col-sm-2">Ausschlagmenge</dt>
+                    <dd class="col-sm-4">{{ brew.size }}</dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+    <div class="row p-1">
+        <div class="col">
+            <table class="table">
+                <thead>
+                    <td>Fass</td>
+                    <td>Ort</td>
+                </thead>
+                {% for filling in brew.fillings %}
+                {% if not filling.empty %}
+                <tr>
+                    <td><a href="{{ url_for(".show_keg", keg_id=filling.keg.id) }}">{{ filling.keg.name }}</a></td>
+                    <td>{{ filling.keg|last_location }}</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -11,7 +11,7 @@
     </thead>
     {% for brew in brews %}
     <tr>
-        <td>{{ brew.name}}</td>
+        <td><a href="{{ url_for(".show_brew", brew_id=brew.id) }}">{{ brew.name}}</a></td>
         <td>{{ brew.date.strftime('%d.%m.%Y') }}</td>
         <td>{{ brew.size}}</td>
     </tr>

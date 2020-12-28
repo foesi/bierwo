@@ -155,3 +155,8 @@ def create_brew():
         return redirect(url_for("list_brews"))
     return render_template("create_brew.html", form=form)
 
+
+@app.route("/brews/show/<int:brew_id>")
+def show_brew(brew_id):
+    brew = session.query(Brew).filter_by(id=brew_id).one()
+    return render_template("show_brew.html", brew=brew)
