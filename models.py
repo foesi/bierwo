@@ -56,6 +56,16 @@ class Brew(Base):
     fillings = relationship("Filling")
 
 
+class BrewComment(Base):
+    __tablename__ = 'brew_comments'
+
+    id = Column(Integer, primary_key=True)
+    timestamp = Column(DateTime, default=datetime.datetime.now, nullable=False)
+    comment = Column(Text, nullable=False)
+
+    brew_id = Column("brew_id", Integer, ForeignKey('brews.id'), nullable=False)
+
+
 class Keg(Base):
     __tablename__ = 'kegs'
 
@@ -64,6 +74,7 @@ class Keg(Base):
     type = Column(Enum(KeyType))
     size = Column(Integer, nullable=False)
     deprecated = Column(Boolean, default=False, nullable=False)
+    reserved = Column(Boolean, default=False, nullable=False)
     comment = Column(Text)
 
     keg_comments = relationship("KegComment")
