@@ -12,7 +12,28 @@
         <td>Fass</td>
     </thead>
     {% for keg in kegs %}
-    {% if keg|last_filling is not none and (keg|last_filling).empty == False %}
+    {% if keg|last_filling is not none and (keg|last_filling).empty == False and not keg.reserved %}
+    <tr>
+        <td>{{ keg|last_beer }}</td>
+        <td>{{ keg.size }}</td>
+        <td>{{ keg|last_location }}</td>
+        <td><a href="{{ url_for(".show_keg", keg_id=keg.id) }}">{{ keg.name }}</a></td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+</table>
+</div>
+<div class="container">
+    <h3>Reservierte Fässer</h3>
+<table class="table">
+    <thead>
+        <td>Bier</td>
+        <td>Menge</td>
+        <td>Ort</td>
+        <td>Fass</td>
+    </thead>
+    {% for keg in kegs %}
+    {% if keg|last_filling is not none and (keg|last_filling).empty == False and keg.reserved %}
     <tr>
         <td>{{ keg|last_beer }}</td>
         <td>{{ keg.size }}</td>

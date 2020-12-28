@@ -19,6 +19,10 @@
                     <dd class="col-sm-4">{{ keg|last_location }}</dd>
                 </div>
                 <div class="row">
+                    <dt class="col-sm-2">Reserviert</dt>
+                    <dd class="col-sm-4">{% if keg.reserved %}<i class="bi-check-circle"></i>{% else %}<i class="bi-x-circle"></i>{% endif %}</dd>
+                </div>
+                <div class="row">
                     <dt class="col-sm-2">Name</dt>
                     <dd class="col-sm-4">{{ keg.name }}</dd>
                 </div>

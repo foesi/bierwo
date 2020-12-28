@@ -101,12 +101,15 @@ def create_keg_comment(keg_id):
         new_comment.comment = form.comment.data
         new_comment.timestamp = datetime.datetime.now()
         new_comment.keg_id = keg_id
+        keg = session.query(Keg).filter_by(id=keg_id).one()
+        keg.reserved = form.reserved.data
         session.add(new_comment)
         session.commit()
         return redirect(url_for("show_keg", keg_id=keg_id))
     else:
         keg = session.query(Keg).filter_by(id=keg_id).one()
         form.location.data = last_location_filter(keg)
+        form.reserved.data = keg.reserved
     return render_template("create_keg_comment.html", form=form, keg_id=keg_id)
 
 
@@ -135,6 +138,7 @@ def empty_keg(keg_id):
     keg = session.query(Keg).filter_by(id=keg_id).one()
     for filling in keg.fillings:
         filling.empty = True
+    keg.reserved = False
     session.commit()
     return redirect(url_for("show_keg", keg_id=keg_id))
 

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, DateField, SelectField, TextAreaField
+from wtforms import StringField, IntegerField, DateField, SelectField, TextAreaField, BooleanField
 
 __author__ = 'Florian Österreich'
 
@@ -23,3 +23,4 @@ class FillKeg(FlaskForm):
 class CommentKeg(FlaskForm):
     location = StringField(u"Ort")
     comment = TextAreaField(u"Kommentar")
+    reserved = BooleanField("Reserviert")
