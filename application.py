@@ -1,6 +1,6 @@
 from flask import Flask, render_template, url_for, request, make_response
-from models import engine, Keg, Brew, Filling, KegComment
-from forms import CreateKeg, CreateBrew, FillKeg, CommentKeg
+from models import engine, Keg, Brew, Filling, KegComment, BrewComment
+from forms import CreateKeg, CreateBrew, FillKeg, CommentKeg, CommentBrew
 from sqlalchemy.orm import sessionmaker, scoped_session
 from werkzeug.utils import redirect
 from jinja2 import Template
@@ -167,6 +167,20 @@ def create_brew():
 def show_brew(brew_id):
     brew = session.query(Brew).filter_by(id=brew_id).one()
     return render_template("show_brew.html", brew=brew)
+
+
+@app.route("/brews/comment/create/<int:brew_id>", methods=["GET", "POST"])
+def create_brew_comment(brew_id):
+    form = CommentBrew()
+    if form.validate_on_submit():
+        new_comment = BrewComment()
+        new_comment.comment = form.comment.data
+        new_comment.timestamp = datetime.datetime.now()
+        new_comment.brew_id = brew_id
+        session.add(new_comment)
+        session.commit()
+        return redirect(url_for("show_brew", brew_id=brew_id))
+    return render_template("create_brew_comment.html", form=form, brew_id=brew_id)
 
 
 @app.route("/kegs/qrcode/print")

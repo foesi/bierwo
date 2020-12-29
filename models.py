@@ -53,6 +53,7 @@ class Brew(Base):
     final_gravity = Column(Float)
     size = Column(Integer)
 
+    brew_comments = relationship("BrewComment")
     fillings = relationship("Filling")
 
 

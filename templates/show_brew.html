@@ -2,6 +2,9 @@
 {% block title %}{{ brew.name }} ({{ brew.date.strftime('%d.%m.%Y')}}){% endblock %}
 {% block content %}
 <div class="container">
+    <div class="d-grid gap-2 d-md-block p-4">
+        <a class="btn btn-primary btn-lg" href="{{ url_for(".create_brew_comment", brew_id=brew.id) }}" role="button">Kommentar</a>
+    </div>
     <div class="row p-1">
         <div class="col-sm-8">
             <dl class="row">
@@ -38,6 +41,20 @@
                     <td>{{ filling.keg|last_location }}</td>
                 </tr>
                 {% endif %}
+                {% endfor %}
+            </table>
+        </div>
+        <div class="col">
+            <table class="table">
+                <thead>
+                    <td>Datum</td>
+                    <td>Kommentar</td>
+                </thead>
+                {% for comment in brew.brew_comments|reverse %}
+                <tr>
+                    <td>{{ comment.timestamp.strftime('%H:%M Uhr %d.%m.%Y') }}</td>
+                    <td>{{ comment.comment }}</td>
+                </tr>
                 {% endfor %}
             </table>
         </div>

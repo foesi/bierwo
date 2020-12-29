@@ -24,3 +24,7 @@ class CommentKeg(FlaskForm):
     location = StringField(u"Ort")
     comment = TextAreaField(u"Kommentar")
     reserved = BooleanField("Reserviert")
+
+
+class CommentBrew(FlaskForm):
+    comment = TextAreaField(u"Kommentar")
