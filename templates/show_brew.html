@@ -17,8 +17,8 @@
                     <dd class="col-sm-4">{{ brew.date.strftime('%d.%m.%Y') }}</dd>
                 </div>
                 <div class="row">
-                    <dt class="col-sm-2">Infromationen</dt>
-                    <dd class="col-sm-4">{{ brew.comment }}</dd>
+                    <dt class="col-sm-2">Informationen</dt>
+                    <dd class="col-sm-4">{% if brew.comment is not none %}{{ brew.comment }}{% endif %}</dd>
                 </div>
                 <div class="row">
                     <dt class="col-sm-2">Ausschlagmenge</dt>

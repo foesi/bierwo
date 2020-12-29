@@ -32,7 +32,7 @@
                 </div>
                 <div class="row">
                     <dt class="col-sm-2 ">Kommentar</dt>
-                    <dd class="col-sm-4 ">{{ keg.comment }}</dd>
+                    <dd class="col-sm-4 ">{% if keg.comment is not none %}{{ keg.comment }}{% endif %}</dd>
                 </div>
             </dl>
         </div>
