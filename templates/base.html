@@ -9,7 +9,7 @@
         <link href="{{ url_for("static", filename="css/bootstrap.min.css") }}" rel="stylesheet">
         <link href="{{ url_for("static", filename="css/bootstrap-icons/font/bootstrap-icons.css") }}" rel="stylesheet">
 
-    <title>BierWo?</title>
+    <title>BierWo?{% if title is defined %} - {{ title }}{% endif %}</title>
   </head>
   <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
