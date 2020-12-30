@@ -7,27 +7,22 @@
 <div class="mb-3">
     {{ form.name.label(class="form-label") }}
     {{ form.name(class="form-control", disabled="true") }}
-    {{ form.name.errors }}
 </div>
 <div class="mb-3">
     {{ form.size.label(class="form-label") }}
     {{ form.size(class="form-control", disabled="true") }}
-    {{ form.size.errors }}
 </div>
 <div class="mb-3">
     {{ form.isolated.label(class="form-label") }}
     {{ form.isolated() }}
-    {{ form.isolated.errors }}
 </div>
 <div class="mb-3">
     {{ form.image.label(class="form-label") }}
     {{ form.image() }}
-    {{ form.image.errors }}
 </div>
 <div class="mb-3">
     {{ form.comment.label(class="form-label") }}
     {{ form.comment(class="form-control") }}
-    {{ form.comment.errors }}
 </div>
     <button type="submit" class="btn btn-primary">Erstellen</button>
 </form>
