@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Fass - {{ keg.name }}{% endblock %}
+{% set quicklink = url_for(".list_kegs") %}
 {% block content %}
 <div class="container">
     <div class="d-grid gap-2 d-md-block p-4">

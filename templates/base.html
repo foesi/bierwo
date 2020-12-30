@@ -33,8 +33,16 @@
   {% for message in get_flashed_messages() %}
     <div class="alert alert-primary" role="alert">{{ message }}</div>
   {% endfor %}
-  <div class="container"><h1>{% block title %}{% endblock %}</h1></div>
-
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <h1>{% block title %}{% endblock %}</h1>
+      </div>
+      <div class="col" align="right">
+        {% if quicklink is defined %}<a class="btn btn-lg" href="{{ quicklink }}"><i class="bi-house"></i></a>{% endif %}
+      </div>
+    </div>
+  </div>
     {% block content %}{% endblock %}
     <script src="{{ url_for("static", filename="js/bootstrap.bundle.min.js") }}"></script>
 

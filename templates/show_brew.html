@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ brew.name }} ({{ brew.date.strftime('%d.%m.%Y')}}){% endblock %}
+{% set quicklink = url_for(".list_brews") %}
 {% block content %}
 <div class="container">
     <div class="d-grid gap-2 d-md-block p-4">
