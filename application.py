@@ -1,6 +1,8 @@
-from flask import Flask, render_template, url_for, request, make_response
-from models import engine, Keg, Brew, Filling, KegComment, BrewComment
-from forms import CreateKeg, CreateBrew, FillKeg, CommentKeg, CommentBrew
+import io
+
+from flask import Flask, render_template, url_for, request, make_response, send_file
+from models import engine, Keg, Brew, Filling, KegComment, BrewComment, KegFitting, KegType
+from forms import CreateKeg, CreateBrew, FillKeg, CommentKeg, CommentBrew, EditKeg
 from sqlalchemy.orm import sessionmaker, scoped_session
 from werkzeug.utils import redirect
 from jinja2 import Template
@@ -90,6 +92,34 @@ def create_keg():
         generate_qrcode(new_keg.id)
         return redirect(url_for("list_kegs"))
     return render_template("create_keg.html", form=form)
+
+
+@app.route("/kegs/edit/<int:keg_id>", methods=["GET", "POST"])
+def edit_keg(keg_id):
+    form = EditKeg()
+    keg = session.query(Keg).filter_by(id=keg_id).one()
+    if form.validate_on_submit():
+        keg.isolated = form.isolated.data
+        # keg.type = form.type.data
+        # keg.fitting = form.fitting.data
+        keg.comment = form.comment.data
+        if form.image.data is not None:
+            image_data = request.files[form.image.name].read()
+            keg.photo = image_data
+        session.commit()
+        return redirect(url_for("list_kegs"))
+    else:
+        form.name.data = keg.name
+        form.size.data = keg.size
+        form.comment.data = keg.comment
+        # form.fitting.choices = [(i.value, i.value) for i in KegFitting]
+        # if keg.fitting is not None:
+        #     form.fitting.data = keg.fitting
+        # form.type.choices = [(i.value, i.value) for i in KegType]
+        # if keg.type is not None:
+        #     form.type.data = keg.type
+        form.isolated.data = keg.isolated
+    return render_template("edit_keg.html", form=form, keg=keg)
 
 
 @app.route("/kegs/comment/create/<int:keg_id>", methods=["GET", "POST"])
@@ -199,3 +229,11 @@ def print_qrcodes():
         response.headers.set('Content-Disposition', 'attachment', filename="labels.pdf")
         response.headers.set('Content-Type', 'application/pdf')
         return response
+
+
+@app.route("/kegs/photo/<int:keg_id>")
+def show_photo(keg_id):
+    keg = session.query(Keg).filter_by(id=keg_id).one()
+    return send_file(io.BytesIO(keg.photo),
+                     attachment_filename='keg.jpg',
+                     mimetype='image/jpg')

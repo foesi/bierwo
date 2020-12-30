@@ -1,5 +1,6 @@
 from sqlalchemy.orm import relationship
-from sqlalchemy import create_engine, Column, Date, Float, Integer, String, Text, ForeignKey, Enum, DateTime, Boolean
+from sqlalchemy import create_engine, Column, Date, Float, Integer, String, Text, ForeignKey, Enum, DateTime, Boolean, \
+    LargeBinary
 from sqlalchemy.ext.declarative import declarative_base
 import enum
 import datetime
@@ -19,11 +20,17 @@ def create_models():
     Base.metadata.create_all(engine)
 
 
-class KeyType(enum.Enum):
+class KegType(enum.Enum):
     CC = "CC"
     NC = "NC"
     DIN = "DIN"
     EURO = "EURO"
+    HOLZ = "HOLZ"
+
+
+class KegFitting(enum.Enum):
+    KORB = "Korb"
+    FLACH = "Flach"
 
 
 class Filling(Base):
@@ -51,6 +58,8 @@ class Brew(Base):
     comment = Column(Text)
     original_gravity = Column(Float)
     final_gravity = Column(Float)
+    recipe = Column(String)
+    protocol = Column(LargeBinary)
     size = Column(Integer)
 
     brew_comments = relationship("BrewComment")
@@ -72,10 +81,13 @@ class Keg(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True, nullable=False)
-    type = Column(Enum(KeyType))
+    type = Column(Enum(KegType))
+    fitting = Column(Enum(KegFitting))
     size = Column(Integer, nullable=False)
     deprecated = Column(Boolean, default=False, nullable=False)
     reserved = Column(Boolean, default=False, nullable=False)
+    isolated = Column(Boolean, default=False, nullable=False)
+    photo = Column(LargeBinary)
     comment = Column(Text)
 
     keg_comments = relationship("KegComment")
