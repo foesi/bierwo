@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Einloggen{% endblock %}
+{% block content %}
+<div class="container">
+<form method="POST" action="{{ url_for(".login") }}">
+    {{ form.csrf_token }}
+<div class="mb-3">
+    {{ form.password.label(class="form-label") }}
+    {{ form.password(class="form-control") }}
+</div>
+    <button type="submit" class="btn btn-primary">Login</button>
+</form>
+</div>
+{% endblock %}

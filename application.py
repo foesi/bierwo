@@ -1,8 +1,9 @@
 import io
+from flask import Flask, render_template, url_for, request, make_response, send_file, flash
+from flask_login import UserMixin, LoginManager, login_required, login_user
 
-from flask import Flask, render_template, url_for, request, make_response, send_file
 from models import engine, Keg, Brew, Filling, KegComment, BrewComment, KegFitting, KegType
-from forms import CreateKeg, CreateBrew, FillKeg, CommentKeg, CommentBrew, EditKeg
+from forms import CreateKeg, CreateBrew, FillKeg, CommentKeg, CommentBrew, EditKeg, LoginForm
 from sqlalchemy.orm import sessionmaker, scoped_session
 from werkzeug.utils import redirect
 from jinja2 import Template
@@ -19,7 +20,36 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = os.getenv("SECRET") if len(os.getenv("SECRET", default=[])) > 0 else 'geheim'
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+
 session = scoped_session(sessionmaker(engine))
+
+
+class User(UserMixin):
+    id = "bier"
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User()
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        if form.password.data != os.getenv("BIERWO_PASS"):
+            flash("Falsches Passwort.")
+
+        login_user(User())
+
+        flash('Logged in successfully.')
+
+        next_page = request.args.get('next')
+
+        return redirect(next_page or url_for('list_kegs'))
+    return render_template('login.html', form=form)
 
 
 @app.teardown_request
@@ -75,12 +105,14 @@ def show_keg(keg_id):
 
 
 @app.route("/kegs/qrcode/generate/<int:keg_id>")
+@login_required
 def regenerate_qrcode(keg_id):
     generate_qrcode(keg_id)
     return redirect(url_for("show_keg", keg_id=keg_id))
 
 
 @app.route("/kegs/create", methods=["GET", "POST"])
+@login_required
 def create_keg():
     form = CreateKeg()
     if form.validate_on_submit():
@@ -95,6 +127,7 @@ def create_keg():
 
 
 @app.route("/kegs/edit/<int:keg_id>", methods=["GET", "POST"])
+@login_required
 def edit_keg(keg_id):
     form = EditKeg()
     keg = session.query(Keg).filter_by(id=keg_id).one()
@@ -123,6 +156,7 @@ def edit_keg(keg_id):
 
 
 @app.route("/kegs/comment/create/<int:keg_id>", methods=["GET", "POST"])
+@login_required
 def create_keg_comment(keg_id):
     form = CommentKeg()
     if form.validate_on_submit():
@@ -144,6 +178,7 @@ def create_keg_comment(keg_id):
 
 
 @app.route("/kegs/fill/<int:keg_id>", methods=["GET", "POST"])
+@login_required
 def fill_keg(keg_id):
     form = FillKeg()
     brews = session.query(Brew).order_by(Brew.date.desc())
@@ -164,6 +199,7 @@ def fill_keg(keg_id):
 
 
 @app.route("/kegs/empty/<int:keg_id>")
+@login_required
 def empty_keg(keg_id):
     keg = session.query(Keg).filter_by(id=keg_id).one()
     for filling in keg.fillings:
@@ -180,6 +216,7 @@ def list_brews():
 
 
 @app.route("/brews/create", methods=["GET", "POST"])
+@login_required
 def create_brew():
     form = CreateBrew()
     if form.validate_on_submit():
@@ -200,6 +237,7 @@ def show_brew(brew_id):
 
 
 @app.route("/brews/comment/create/<int:brew_id>", methods=["GET", "POST"])
+@login_required
 def create_brew_comment(brew_id):
     form = CommentBrew()
     if form.validate_on_submit():

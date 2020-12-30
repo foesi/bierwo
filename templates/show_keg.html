@@ -8,11 +8,13 @@
 {% endif %}
 {% block content %}
 <div class="container">
+    {% if current_user.is_authenticated %}
     <div class="d-grid gap-2 d-md-block p-4">
         <a class="btn btn-primary btn-lg {% if keg|last_filling is not none and not (keg|last_filling).empty %}disabled{% endif %}" href="{{ url_for(".fill_keg", keg_id=keg.id) }}" role="button">Füllen</a>
         <a class="btn btn-primary btn-lg {% if keg|last_filling is none or (keg|last_filling).empty %}disabled{% endif %}" href="{{ url_for(".empty_keg", keg_id=keg.id) }}" role="button">Leeren</a>
         <a class="btn btn-primary btn-lg" href="{{ url_for(".create_keg_comment", keg_id=keg.id) }}" role="button">Kommentar</a>
     </div>
+    {% endif %}
     <div class="row p-1">
         <div class="col-sm-8 p-3">
             <dl class="row">
@@ -41,12 +43,16 @@
                     <dd class="col-sm-4 ">{% if keg.comment is not none %}{{ keg.comment }}{% endif %}</dd>
                 </div>
             </dl>
+            {% if current_user.is_authenticated %}
             <a class="btn btn-secondary" href="{{ url_for(".edit_keg", keg_id=keg.id) }}" role="button">Bearbeiten <i class="bi-gear-fill"></i></a>
+            {% endif %}
         </div>
         <div class="col-sm-2">
             {% if keg.photo is none %}
                 <div class="row"><img src="{{ url_for("static", filename="qrcodes/"+ keg.id|string + ".jpg") }}" class="img-fluid rounded" alt="QR Code für Fass {{ keg.name }}"></div>
+                {% if current_user.is_authenticated %}
                 <div class="row" style="float: center"><a class="btn btn-secondary btn-sm" href="{{ url_for(".regenerate_qrcode", keg_id=keg.id) }}" role="button">QRCode generieren</a></div>
+                {% endif %}
             {% else %}
                 <img src="{{ url_for(".show_photo", keg_id=keg.id) }}" class="img-fluid rounded" alt="Photo für Fass {{ keg.name }}">
             {% endif %}

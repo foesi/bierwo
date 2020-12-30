@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% block title %}Fässer{% endblock %}
 {% block content %}
+{% if current_user.is_authenticated %}
 <div class="container p-4"><a class="btn btn-primary" href="{{ url_for(".create_keg") }}" role="button">Neues Fass</a></div>
+{% endif %}
 <div class="container">
     <h3>Volle Fässer</h3>
 <table class="table">

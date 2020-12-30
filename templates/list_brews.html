@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% block title %}Brauungen{% endblock %}
 {% block content %}
+{% if current_user.is_authenticated %}
 <div class="container p-4"><a class="btn btn-primary" href="{{ url_for(".create_brew") }}" role="button">Neue Brauung</a></div>
+{% endif %}
 <div class="container">
 <table class="table">
     <thead>

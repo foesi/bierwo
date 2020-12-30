@@ -4,9 +4,11 @@
 {% set title = brew.name + " (" + brew.date.strftime('%d.%m.%Y') + ")" %}
 {% block content %}
 <div class="container">
+    {% if current_user.is_authenticated %}
     <div class="d-grid gap-2 d-md-block p-4">
         <a class="btn btn-primary btn-lg" href="{{ url_for(".create_brew_comment", brew_id=brew.id) }}" role="button">Kommentar</a>
     </div>
+    {% endif %}
     <div class="row p-1">
         <div class="col-sm-8">
             <dl class="row">

@@ -1,8 +1,13 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, DateField, SelectField, TextAreaField, BooleanField, FileField
+from wtforms import StringField, IntegerField, DateField, SelectField, TextAreaField, BooleanField, FileField, \
+    PasswordField
 from models import KegFitting, KegType
 
 __author__ = 'Florian Österreich'
+
+
+class LoginForm(FlaskForm):
+    password = PasswordField(u"Passwort")
 
 
 class CreateKeg(FlaskForm):
