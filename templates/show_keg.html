@@ -54,7 +54,7 @@
                     <td>Abfülldatum</td>
                 </thead>
                 {% for filling in keg.fillings|reverse %}
-                <tr>
+                <tr {% if loop.index == 1 %} class="table-active"{% endif %}>
                     <td><a href="{{ url_for(".show_brew", brew_id=filling.brew.id) }}">{{ filling.brew.name }}</a></td>
                     <td>{{ filling.date.strftime('%d.%m.%Y') }}</td>
                 </tr>
