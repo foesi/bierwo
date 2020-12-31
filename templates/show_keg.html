@@ -38,6 +38,18 @@
                     <dt class="col-sm-2">Volumen</dt>
                     <dd class="col-sm-4">{{ keg.size }}</dd>
                 </div>
+                {% if keg.fitting is not none %}
+                <div class="row">
+                    <dt class="col-sm-2">Fitting</dt>
+                    <dd class="col-sm-4">{{ keg.fitting.value }}</dd>
+                </div>
+                {% endif %}
+                {% if keg.type is not none %}
+                <div class="row">
+                    <dt class="col-sm-2">Typ</dt>
+                    <dd class="col-sm-4">{{ keg.type.value }}</dd>
+                </div>
+                {% endif %}
                 <div class="row">
                     <dt class="col-sm-2 ">Kommentar</dt>
                     <dd class="col-sm-4 ">{% if keg.comment is not none %}{{ keg.comment }}{% endif %}</dd>

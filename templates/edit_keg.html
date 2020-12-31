@@ -17,6 +17,14 @@
     {{ form.isolated() }}
 </div>
 <div class="mb-3">
+    {{ form.fitting.label(class="form-label") }}
+    {{ form.fitting(class="form-control") }}
+</div>
+<div class="mb-3">
+    {{ form.type.label(class="form-label") }}
+    {{ form.type(class="form-control") }}
+</div>
+<div class="mb-3">
     {{ form.image.label(class="form-label") }}
     {{ form.image() }}
 </div>

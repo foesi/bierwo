@@ -17,8 +17,8 @@ class CreateKeg(FlaskForm):
 
 
 class EditKeg(CreateKeg):
-    # type = SelectField(u"Typ", coerce=KegType)
-    # fitting = SelectField(u"Fitting", coerce=KegFitting)
+    type = SelectField(u"Typ")
+    fitting = SelectField(u"Fitting")
     isolated = BooleanField(u"Isoliert")
     image = FileField(u"Foto")
 

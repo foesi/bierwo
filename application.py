@@ -139,10 +139,21 @@ def create_keg():
 def edit_keg(keg_id):
     form = EditKeg()
     keg = session.query(Keg).filter_by(id=keg_id).one()
+    fittings = [(None, "")]
+    fittings.extend([(i.value, i.value) for i in KegFitting])
+    form.fitting.choices = fittings
+    types = [(None, "")]
+    types.extend([(i.value, i.value) for i in KegType])
+    form.type.choices = types
+    if keg.type is not None:
+        form.type.data = keg.type
     if form.validate_on_submit():
         keg.isolated = form.isolated.data
-        # keg.type = form.type.data
-        # keg.fitting = form.fitting.data
+
+        fitting = None if form.fitting.data == "None" else KegFitting(form.fitting.data)
+        keg_type = None if form.type.data == "None" else KegType(form.type.data)
+        keg.fitting = fitting
+        keg.type = keg_type
         keg.comment = form.comment.data
         if form.image.data is not None:
             image_data = request.files[form.image.name].read()
@@ -152,13 +163,11 @@ def edit_keg(keg_id):
     else:
         form.name.data = keg.name
         form.size.data = keg.size
+        if keg.fitting is not None:
+            form.fitting.data = keg.fitting
+        if keg.type is not None:
+            form.type.data = keg.type
         form.comment.data = keg.comment
-        # form.fitting.choices = [(i.value, i.value) for i in KegFitting]
-        # if keg.fitting is not None:
-        #     form.fitting.data = keg.fitting
-        # form.type.choices = [(i.value, i.value) for i in KegType]
-        # if keg.type is not None:
-        #     form.type.data = keg.type
         form.isolated.data = keg.isolated
     return render_template("edit_keg.html", form=form, keg=keg)
 
@@ -188,6 +197,11 @@ def create_keg_comment(keg_id):
 @app.route("/kegs/fill/<int:keg_id>", methods=["GET", "POST"])
 @login_required
 def fill_keg(keg_id):
+    keg = session.query(Keg).filter_by(id=keg_id).one()
+    for filling in keg.fillings:
+        if not filling.empty:
+            flash("Fass ist nicht leer.")
+            return redirect(url_for("show_keg", keg_id=keg_id))
     form = FillKeg()
     brews = session.query(Brew).order_by(Brew.date.desc())
     form.brew_id.choices = [(b.id, "%s (%s)" % (b.name, b.date.strftime('%d.%m.%Y'))) for b in brews]
@@ -196,8 +210,6 @@ def fill_keg(keg_id):
         new_filling.keg_id = keg_id
         new_filling.date = form.date.data
         new_filling.brew_id = form.brew_id.data
-        keg = session.query(Keg).filter_by(id=keg_id).one()
-        keg.empty = False
         session.add(new_filling)
         session.commit()
         return redirect(url_for("show_keg", keg_id=keg_id))
