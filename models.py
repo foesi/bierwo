@@ -40,7 +40,7 @@ class Filling(Base):
 
     date = Column(Date, nullable=False)
 
-    empty = Column(Boolean, default=False, nullable=False)
+    empty_date = Column(Date)
 
     brew_id = Column('brew_id', Integer, ForeignKey('brews.id'))
     keg_id = Column('keg_id', Integer, ForeignKey('kegs.id'))

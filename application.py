@@ -77,7 +77,7 @@ def last_filling_filter(value):
 def last_beer_filter(value):
     last_filling = last_filling_filter(value)
     if last_filling is not None:
-        if not last_filling.empty:
+        if last_filling.empty_date is None:
             return last_filling.brew.name
         else:
             return "leer"
@@ -199,7 +199,7 @@ def create_keg_comment(keg_id):
 def fill_keg(keg_id):
     keg = session.query(Keg).filter_by(id=keg_id).one()
     for filling in keg.fillings:
-        if not filling.empty:
+        if filling.empty_date is None :
             flash("Fass ist nicht leer.")
             return redirect(url_for("show_keg", keg_id=keg_id))
     form = FillKeg()
@@ -223,8 +223,14 @@ def fill_keg(keg_id):
 def empty_keg(keg_id):
     keg = session.query(Keg).filter_by(id=keg_id).one()
     for filling in keg.fillings:
-        filling.empty = True
+        filling.empty_date = datetime.datetime.now()
+    new_comment = KegComment()
+    new_comment.location = last_location_filter(keg)
+    new_comment.comment = "Bier %s leer getrunken!" % filling.brew.name
+    new_comment.timestamp = datetime.datetime.now()
+    new_comment.keg_id = keg_id
     keg.reserved = False
+    session.add(new_comment)
     session.commit()
     return redirect(url_for("show_keg", keg_id=keg_id))
 

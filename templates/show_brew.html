@@ -39,7 +39,7 @@
                     <td>Ort</td>
                 </thead>
                 {% for filling in brew.fillings %}
-                {% if not filling.empty %}
+                {% if filling.empty_date is none %}
                 <tr>
                     <td><a href="{{ url_for(".show_keg", keg_id=filling.keg.id) }}">{{ filling.keg.name }}</a></td>
                     <td>{{ filling.keg|last_location }}</td>
