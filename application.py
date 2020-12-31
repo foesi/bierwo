@@ -1,6 +1,6 @@
 import io
 from flask import Flask, render_template, url_for, request, make_response, send_file, flash
-from flask_login import UserMixin, LoginManager, login_required, login_user
+from flask_login import UserMixin, LoginManager, login_required, login_user, logout_user
 
 from models import engine, Keg, Brew, Filling, KegComment, BrewComment, KegFitting, KegType
 from forms import CreateKeg, CreateBrew, FillKeg, CommentKeg, CommentBrew, EditKeg, LoginForm
@@ -41,6 +41,7 @@ def login():
     if form.validate_on_submit():
         if form.password.data != os.getenv("BIERWO_PASS"):
             flash("Falsches Passwort.")
+            return redirect(url_for("login"))
 
         login_user(User())
 
@@ -50,6 +51,13 @@ def login():
 
         return redirect(next_page or url_for('list_kegs'))
     return render_template('login.html', form=form)
+
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("list_kegs"))
 
 
 @app.teardown_request
