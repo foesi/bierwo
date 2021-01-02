@@ -210,8 +210,16 @@ def fill_keg(keg_id):
         new_filling.keg_id = keg_id
         new_filling.date = form.date.data
         new_filling.brew_id = form.brew_id.data
+        keg.clean = False
+        new_comment = KegComment()
+        new_comment.location = last_location_filter(keg)
+        new_comment.comment = "Fass mit %s gefüllt." % new_filling.brew.name
+        new_comment.timestamp = datetime.datetime.now()
+        new_comment.keg_id = keg_id
         session.add(new_filling)
+        session.add(new_comment)
         session.commit()
+        flash("Fass gefüllt.")
         return redirect(url_for("show_keg", keg_id=keg_id))
     else:
         form.date.data = datetime.datetime.now()
