@@ -5,6 +5,8 @@ from flask_login import UserMixin, LoginManager, login_required, login_user, log
 from models import engine, Keg, Brew, Filling, KegComment, BrewComment, KegFitting, KegType
 from forms import CreateKeg, CreateBrew, FillKeg, CommentKeg, CommentBrew, EditKeg, LoginForm, EditBrew
 from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.sql import func
+from sqlalchemy.sql.expression import true
 from werkzeug.utils import redirect
 from jinja2 import Template
 import qrcode
@@ -103,7 +105,13 @@ def main():
 @app.route("/kegs/list")
 def list_kegs():
     kegs = session.query(Keg).all()
-    return render_template("list_kegs.html", kegs=kegs)
+    drinkable_beer = session.query(func.sum(Keg.size)).join(Filling).filter(Filling.empty_date.is_(None)).first()[0]
+    drinkable_beer = 0 if drinkable_beer is None else drinkable_beer
+    drunk_beer = session.query(func.sum(Keg.size)).join(Filling).filter(Filling.empty_date.isnot(None)).first()[0]
+    drunk_beer = 0 if drunk_beer is None else drunk_beer
+    cleaned_kegs = session.query(func.sum(Keg.size)).filter(Keg.clean == true()).first()[0]
+    cleaned_kegs = 0 if cleaned_kegs is None else cleaned_kegs
+    return render_template("list_kegs.html", kegs=kegs, drunk_beer=drunk_beer, cleaned_kegs=cleaned_kegs, drinkable_beer=drinkable_beer)
 
 
 @app.route("/kegs/show/<int:keg_id>")

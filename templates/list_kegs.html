@@ -1,9 +1,22 @@
 {% extends "base.html" %}
-{% block title %}Fässer{% endblock %}
 {% block content %}
 {% if current_user.is_authenticated %}
 <div class="container-fluid p-4"><a class="btn btn-primary" href="{{ url_for(".create_keg") }}" role="button">Neues Fass</a></div>
 {% endif %}
+<dl class="row p-2">
+    <div class="col">
+        <dt class="col">Bier</dt>
+        <dd class="col">{{ drinkable_beer }}</dd>
+    </div>
+    <div class="col">
+        <dt class="col">Saubere Fässer</dt>
+        <dd class="col">{{ cleaned_kegs }}</dd>
+    </div>
+    <div class="col">
+        <dt class="col">Bier getrunken</dt>
+        <dd class="col">{{ drunk_beer }}</dd>
+    </div>
+</dl>
 <div class="container-fluid">
     <h3>Volle Fässer</h3>
 <div class="table-responsive-sm">
