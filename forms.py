@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, DateField, SelectField, TextAreaField, BooleanField, FileField, \
-    PasswordField
-from models import KegFitting, KegType
+from wtforms import StringField, SelectField, TextAreaField, BooleanField, FileField, PasswordField
+from wtforms.validators import optional
+from wtforms.fields.html5 import IntegerField, DateField, URLField, DecimalField
 
 __author__ = 'Florian Österreich'
 
@@ -25,13 +25,21 @@ class EditKeg(CreateKeg):
 
 class CreateBrew(FlaskForm):
     name = StringField(u'Name')
-    date = DateField(u'Brautag', format='%d.%m.%Y')
+    date = DateField(u'Brautag')
     size = IntegerField(u'Ausschlagsmenge')
+
+
+class EditBrew(CreateBrew):
+    comment = TextAreaField(u"Informationen")
+    recipe = URLField(u"Rezept")
+    protocol = FileField(u"Brauprotokoll")
+    original_gravity = DecimalField(u"Stammwürze (% Brix)", validators=[optional()])
+    final_gravity = DecimalField(u"Extrakt Jungbier (% Brix)", validators=[optional()])
 
 
 class FillKeg(FlaskForm):
     brew_id = SelectField(u"Sud", coerce=int)
-    date = DateField(u"Abfülldatum", format='%d.%m.%Y')
+    date = DateField(u"Abfülldatum")
 
 
 class CommentKeg(FlaskForm):

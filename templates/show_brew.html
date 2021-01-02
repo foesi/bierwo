@@ -14,7 +14,7 @@
             <dl class="row">
                 <div class="row">
                     <dt class="col-sm-2">Name</dt>
-                    <dd class="col-sm-4">{{ brew|last_beer }}</dd>
+                    <dd class="col-sm-4">{{ brew.name }}</dd>
                 </div>
                 <div class="row">
                     <dt class="col-sm-2">Brautag</dt>
@@ -28,7 +28,34 @@
                     <dt class="col-sm-2">Ausschlagmenge</dt>
                     <dd class="col-sm-4">{{ brew.size }}</dd>
                 </div>
+                {% if brew.recipe is not none %}
+                <div class="row">
+                    <dt class="col-sm-2">Rezept</dt>
+                    <dd class="col-sm-4"><a href="{{ brew.recipe }}">MaischeMalzndMehr</a></dd>
+                </div>
+                {% endif %}
+                {% if brew.protocol is not none %}
+                <div class="row">
+                    <dt class="col-sm-2">Brauprotokoll</dt>
+                    <dd class="col-sm-4">vorhanden</dd>
+                </div>
+                {% endif %}
+                {% if brew.original_gravity is not none %}
+                <div class="row">
+                    <dt class="col-sm-2">Stammwürze</dt>
+                    <dd class="col-sm-4">{{ brew.original_gravity }}</dd>
+                </div>
+                {% endif %}
+                {% if brew.final_gravity is not none %}
+                <div class="row">
+                    <dt class="col-sm-2">Extrakt Jungbier</dt>
+                    <dd class="col-sm-4">{{ brew.final_gravity }}</dd>
+                </div>
+                {% endif %}
             </dl>
+            {% if current_user.is_authenticated %}
+            <a class="btn btn-secondary" href="{{ url_for(".edit_brew", brew_id=brew.id) }}" role="button">Bearbeiten <i class="bi-gear-fill"></i></a>
+            {% endif %}
         </div>
     </div>
     <div class="row p-1">

@@ -3,7 +3,7 @@ from flask import Flask, render_template, url_for, request, make_response, send_
 from flask_login import UserMixin, LoginManager, login_required, login_user, logout_user
 
 from models import engine, Keg, Brew, Filling, KegComment, BrewComment, KegFitting, KegType
-from forms import CreateKeg, CreateBrew, FillKeg, CommentKeg, CommentBrew, EditKeg, LoginForm
+from forms import CreateKeg, CreateBrew, FillKeg, CommentKeg, CommentBrew, EditKeg, LoginForm, EditBrew
 from sqlalchemy.orm import sessionmaker, scoped_session
 from werkzeug.utils import redirect
 from jinja2 import Template
@@ -278,6 +278,29 @@ def create_brew():
         session.commit()
         return redirect(url_for("list_brews"))
     return render_template("create_brew.html", form=form)
+
+
+@app.route("/brews/edit/<int:brew_id>", methods=["GET", "POST"])
+@login_required
+def edit_brew(brew_id):
+    form = EditBrew()
+    brew = session.query(Brew).filter_by(id=brew_id).one()
+    if form.validate_on_submit():
+        brew.comment = form.comment.data
+        brew.recipe = form.recipe.data
+        brew.original_gravity = form.original_gravity.data
+        brew.final_gravity = form.final_gravity.data
+        session.commit()
+        return redirect(url_for("show_brew", brew_id=brew_id))
+    else:
+        form.name.data = brew.name
+        form.date.data = brew.date
+        form.size.data = brew.size
+        form.comment.data = brew.comment
+        form.recipe.data = brew.recipe
+        form.original_gravity.data = brew.original_gravity
+        form.final_gravity.data = brew.final_gravity
+    return render_template("edit_brew.html", form=form, brew=brew)
 
 
 @app.route("/brews/show/<int:brew_id>")
