@@ -243,6 +243,22 @@ def empty_keg(keg_id):
     return redirect(url_for("show_keg", keg_id=keg_id))
 
 
+@app.route("/kegs/clean/<int:keg_id>")
+@login_required
+def clean_keg(keg_id):
+    keg = session.query(Keg).filter_by(id=keg_id).one()
+    keg.clean = True
+    new_comment = KegComment()
+    new_comment.location = last_location_filter(keg)
+    new_comment.comment = "Fass ist gesäubert und vorgespannt."
+    new_comment.timestamp = datetime.datetime.now()
+    new_comment.keg_id = keg_id
+    session.add(new_comment)
+    session.commit()
+    flash("Fass gereinigt.")
+    return redirect(url_for("show_keg", keg_id=keg_id))
+
+
 @app.route("/brews")
 def list_brews():
     brews = session.query(Brew).all()

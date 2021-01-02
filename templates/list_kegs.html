@@ -43,6 +43,23 @@
     {% endif %}
     {% endfor %}
 </table>
+    <h3>Gereinigte Fässer</h3>
+<table class="table">
+    <thead>
+        <td>Volumen</td>
+        <td>Ort</td>
+        <td>Fass</td>
+    </thead>
+    {% for keg in kegs %}
+    {% if (keg|last_filling is none or (keg|last_filling).empty_date is not none) and keg.clean %}
+    <tr>
+        <td>{{ keg.size }}</td>
+        <td>{{ keg|last_location }}</td>
+        <td><a href="{{ url_for(".show_keg", keg_id=keg.id) }}">{{ keg.name }}</a></td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+</table>
     <h3>Leere Fässer</h3>
 <table class="table">
     <thead>
@@ -51,7 +68,7 @@
         <td>Fass</td>
     </thead>
     {% for keg in kegs %}
-    {% if keg|last_filling is none or (keg|last_filling).empty_date is not none %}
+    {% if (keg|last_filling is none or (keg|last_filling).empty_date is not none) and not keg.clean %}
     <tr>
         <td>{{ keg.size }}</td>
         <td>{{ keg|last_location }}</td>

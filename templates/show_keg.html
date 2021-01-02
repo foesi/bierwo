@@ -13,11 +13,18 @@
         <a class="btn btn-primary btn-lg {% if keg|last_filling is not none and (keg|last_filling).empty_date is none %}disabled{% endif %}" href="{{ url_for(".fill_keg", keg_id=keg.id) }}" role="button">Füllen</a>
         <a class="btn btn-primary btn-lg {% if keg|last_filling is none or (keg|last_filling).empty_date is not none %}disabled{% endif %}" href="{{ url_for(".empty_keg", keg_id=keg.id) }}" role="button">Leeren</a>
         <a class="btn btn-primary btn-lg" href="{{ url_for(".create_keg_comment", keg_id=keg.id) }}" role="button">Kommentar</a>
+        <a class="btn btn-secondary {% if keg.clean or keg|last_filling is not none and (keg|last_filling).empty_date is none %}disabled{% endif %}" href="{{ url_for(".clean_keg", keg_id=keg.id) }}" role="button">Reinigen</a>
     </div>
     {% endif %}
     <div class="row p-1">
         <div class="col-sm-8 p-3">
             <dl class="row">
+                {% if keg.clean %}
+                <div class="row">
+                    <dt class="col-sm-2">Gereinigt</dt>
+                    <dd class="col-sm-4"><i class="bi-check-circle"></i></dd>
+                </div>
+                {% endif %}
                 <div class="row">
                     <dt class="col-sm-2">Inhalt</dt>
                     <dd class="col-sm-4">{{ keg|last_beer }}</dd>

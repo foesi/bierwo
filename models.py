@@ -84,6 +84,7 @@ class Keg(Base):
     type = Column(Enum(KegType))
     fitting = Column(Enum(KegFitting))
     size = Column(Integer, nullable=False)
+    clean = Column(Boolean, default=False, nullable=False)
     deprecated = Column(Boolean, default=False, nullable=False)
     reserved = Column(Boolean, default=False, nullable=False)
     isolated = Column(Boolean, default=False, nullable=False)
