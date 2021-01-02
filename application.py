@@ -145,8 +145,6 @@ def edit_keg(keg_id):
     types = [(None, "")]
     types.extend([(i.value, i.value) for i in KegType])
     form.type.choices = types
-    if keg.type is not None:
-        form.type.data = keg.type
     if form.validate_on_submit():
         keg.isolated = form.isolated.data
 
