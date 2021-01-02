@@ -211,7 +211,8 @@ def fill_keg(keg_id):
         keg.clean = False
         new_comment = KegComment()
         new_comment.location = last_location_filter(keg)
-        new_comment.comment = "Fass mit %s gefüllt." % new_filling.brew.name
+        brew = session.query(Brew).filter_by(id=new_filling.brew_id).one()
+        new_comment.comment = "Fass mit %s gefüllt." % brew.name
         new_comment.timestamp = datetime.datetime.now()
         new_comment.keg_id = keg_id
         session.add(new_filling)
