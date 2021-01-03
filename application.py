@@ -97,6 +97,11 @@ def generate_qrcode(keg_id, path="static/qrcodes/"):
     img.save(os.path.join(path, str(keg_id) + ".jpg"), "JPEG")
 
 
+def check_deprecated(keg_id):
+    keg = session.query(Keg).filter_by(id=keg_id).one()
+    return keg.deprecated
+
+
 @app.route("/")
 def main():
     return render_template("base.html", title="BierWo?")
@@ -104,8 +109,9 @@ def main():
 
 @app.route("/kegs/list")
 def list_kegs():
-    kegs = session.query(Keg).filter(Keg.fermenter == false()).all()
-    fermenter = session.query(Keg).filter(Keg.fermenter == true()).all()
+    kegs = session.query(Keg).filter(and_(Keg.fermenter == false(), Keg.deprecated == false())).all()
+    deprecated_kegs = session.query(Keg).filter(Keg.deprecated == true()).all()
+    fermenter = session.query(Keg).filter(and_(Keg.fermenter == true(), Keg.deprecated == false())).all()
     drinkable_beer = session.query(func.sum(Keg.size)).join(Filling)\
         .filter(and_(Filling.empty_date.is_(None), Keg.fermenter == false())).first()[0]
     drinkable_beer = 0 if drinkable_beer is None else drinkable_beer
@@ -122,7 +128,7 @@ def list_kegs():
     fermenting_beer = 0 if fermenting_beer is None else fermenting_beer
     return render_template("list_kegs.html", kegs=kegs, fermenter=fermenter, drunk_beer=drunk_beer,
                            cleaned_kegs=cleaned_kegs, drinkable_beer=drinkable_beer, empty_fermenters=empty_fermenters,
-                           fermenting_beer=fermenting_beer)
+                           fermenting_beer=fermenting_beer, deprecated_kegs=deprecated_kegs)
 
 
 @app.route("/kegs/show/<int:keg_id>")
@@ -167,6 +173,7 @@ def edit_keg(keg_id):
     if form.validate_on_submit():
         keg.isolated = form.isolated.data
         keg.fermenter = form.fermenter.data
+        keg.deprecated = form.deprecated.data
         fitting = None if form.fitting.data == "None" else KegFitting(form.fitting.data)
         keg_type = None if form.type.data == "None" else KegType(form.type.data)
         keg.fitting = fitting
@@ -186,6 +193,7 @@ def edit_keg(keg_id):
             form.type.data = keg.type
         form.comment.data = keg.comment
         form.isolated.data = keg.isolated
+        form.deprecated.data = keg.deprecated
         form.fermenter.data = keg.fermenter
     return render_template("edit_keg.html", form=form, keg=keg)
 
@@ -227,12 +235,15 @@ def fill_kegs(keg_id, brew_id, filling_date):
     new_comment.keg_id = keg_id
     session.add(new_filling)
     session.add(new_comment)
-    session.commit()
 
 
 @app.route("/kegs/fill/<int:keg_id>", methods=["GET", "POST"])
 @login_required
 def fill_keg(keg_id):
+    if check_deprecated(keg_id):
+        session.rollback()
+        flash("Fass ist ausgemustert")
+        return redirect(url_for("list_kegs"))
     keg = session.query(Keg).filter_by(id=keg_id).one()
     for filling in keg.fillings:
         if filling.empty_date is None :
@@ -243,6 +254,7 @@ def fill_keg(keg_id):
     form.brew_id.choices = [(b.id, "%s (%s)" % (b.name, b.date.strftime('%d.%m.%Y'))) for b in brews]
     if form.validate_on_submit():
         fill_kegs(keg_id, form.brew_id.data, form.date.data)
+        session.commit()
         flash("Fass gefüllt.")
         return redirect(url_for("show_keg", keg_id=keg_id))
     else:
@@ -253,6 +265,10 @@ def fill_keg(keg_id):
 @app.route("/kegs/empty/<int:keg_id>")
 @login_required
 def empty_keg(keg_id):
+    if check_deprecated(keg_id):
+        session.rollback()
+        flash("Fass ist ausgemustert")
+        return redirect(url_for("list_kegs"))
     keg = session.query(Keg).filter_by(id=keg_id).one()
     for filling in keg.fillings:
         filling.empty_date = datetime.datetime.now()
@@ -271,6 +287,10 @@ def empty_keg(keg_id):
 @login_required
 def clean_keg(keg_id):
     keg = session.query(Keg).filter_by(id=keg_id).one()
+    if check_deprecated(keg_id):
+        session.rollback()
+        flash("Fass ist ausgemustert")
+        return redirect(url_for("list_kegs"))
     keg.clean = True
     new_comment = KegComment()
     new_comment.location = last_location_filter(keg)
@@ -330,7 +350,9 @@ def edit_brew(brew_id):
 @app.route("/brews/show/<int:brew_id>")
 def show_brew(brew_id):
     brew = session.query(Brew).filter_by(id=brew_id).one()
-    empty_fermenter = session.query(Keg).filter(Keg.fermenter == true()).all()
+    empty_fermenter = session.query(Keg).filter(and_(Keg.fermenter == true(), Keg.deprecated == false()))\
+        .outerjoin(Filling)\
+        .filter(or_(Filling.keg_id.is_(None), Filling.empty_date.isnot(None))).all()
     fermenter = session.query(Keg).join(Filling).filter(and_(Keg.fermenter == true(), Filling.brew_id == brew_id)).all()
     return render_template("show_brew.html", brew=brew, empty_fermenter=empty_fermenter, fermenter=fermenter)
 
@@ -352,7 +374,7 @@ def create_brew_comment(brew_id):
 
 @app.route("/kegs/qrcode/print")
 def print_qrcodes():
-    kegs = session.query(Keg).all()
+    kegs = session.query(Keg).filter(Keg.deprecated == false()).all()
     temp_dir = tempfile.mkdtemp()
     for keg in kegs:
         generate_qrcode(keg.id, path=temp_dir)
@@ -381,5 +403,10 @@ def show_photo(keg_id):
 def fill_fermenters(brew_id):
     now = datetime.datetime.now()
     for keg_id in request.form:
+        if check_deprecated(keg_id):
+            session.rollback()
+            flash("Fass ist ausgemustert")
+            return redirect(url_for("list_kegs"))
         fill_kegs(int(keg_id), brew_id, now)
+    session.commit()
     return redirect(url_for("show_brew", brew_id=brew_id))

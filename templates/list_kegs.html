@@ -117,5 +117,18 @@
     {% endif %}
     {% endfor %}
 </table>
+    <h3>Ausgemusterte Fässer</h3>
+<table class="table">
+    <thead>
+        <td>Volumen</td>
+        <td>Fass</td>
+    </thead>
+    {% for keg in deprecated_kegs %}
+    <tr>
+        <td>{{ keg.size }}</td>
+        <td><a href="{{ url_for(".show_keg", keg_id=keg.id) }}">{{ keg.name }}</a></td>
+    </tr>
+    {% endfor %}
+</table>
 </div>
 {% endblock %}

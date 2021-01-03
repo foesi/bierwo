@@ -8,7 +8,7 @@
 {% endif %}
 {% block content %}
 <div class="container">
-    {% if current_user.is_authenticated %}
+    {% if current_user.is_authenticated and not keg.deprecated %}
     <div class="d-grid gap-2 d-md-block p-4">
         <a class="btn btn-primary btn-lg {% if keg|last_filling is not none and (keg|last_filling).empty_date is none %}disabled{% endif %}" href="{{ url_for(".fill_keg", keg_id=keg.id) }}" role="button">Füllen</a>
         <a class="btn btn-primary btn-lg {% if keg|last_filling is none or (keg|last_filling).empty_date is not none %}disabled{% endif %}" href="{{ url_for(".empty_keg", keg_id=keg.id) }}" role="button">Leeren</a>

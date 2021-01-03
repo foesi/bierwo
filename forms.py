@@ -19,6 +19,7 @@ class CreateKeg(FlaskForm):
 class EditKeg(CreateKeg):
     type = SelectField(u"Typ")
     fitting = SelectField(u"Fitting")
+    deprecated = BooleanField(u"Ausgemustert")
     isolated = BooleanField(u"Isoliert")
     fermenter = BooleanField(u"Gärfass")
     image = FileField(u"Foto")

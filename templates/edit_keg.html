@@ -13,6 +13,10 @@
     {{ form.size(class="form-control", disabled="true") }}
 </div>
 <div class="mb-3">
+    {{ form.deprecated.label(class="form-label") }}
+    {{ form.deprecated() }}
+</div>
+<div class="mb-3">
     {{ form.fermenter.label(class="form-label") }}
     {{ form.fermenter() }}
 </div>
