@@ -123,9 +123,9 @@ def list_kegs():
     cleaned_kegs = 0 if cleaned_kegs is None else cleaned_kegs
     empty_fermenters = session.query(func.count(Keg.id)).filter(Keg.fermenter == true()).outerjoin(Filling)\
         .filter(or_(Filling.keg_id.is_(None), Filling.empty_date.isnot(None))).first()[0]
-    fermenting_beer = session.query(func.sum(Brew.size.distinct())).join(Filling, Keg)\
-        .filter(and_(Keg.fermenter == true(), Filling.empty_date.is_(None))).first()[0]
-    fermenting_beer = 0 if fermenting_beer is None else fermenting_beer
+    fermenting_beer = session.query(Brew.id, Brew.size).join(Filling, Keg)\
+        .filter(and_(Keg.fermenter == true(), Filling.empty_date.is_(None))).group_by(Brew.id).all()
+    fermenting_beer = 0 if len(fermenting_beer) == 0 else sum([i[1] for i in fermenting_beer])
     return render_template("list_kegs.html", kegs=kegs, fermenter=fermenter, drunk_beer=drunk_beer,
                            cleaned_kegs=cleaned_kegs, drinkable_beer=drinkable_beer, empty_fermenters=empty_fermenters,
                            fermenting_beer=fermenting_beer, deprecated_kegs=deprecated_kegs)
