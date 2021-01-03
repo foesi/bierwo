@@ -20,6 +20,7 @@ class EditKeg(CreateKeg):
     type = SelectField(u"Typ")
     fitting = SelectField(u"Fitting")
     isolated = BooleanField(u"Isoliert")
+    fermenter = BooleanField(u"Gärfass")
     image = FileField(u"Foto")
 
 

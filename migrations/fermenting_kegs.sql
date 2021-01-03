@@ -1,0 +1,1 @@
+ALTER TABLE kegs ADD COLUMN fermenter boolean NOT NULL DEFAULT FALSE;

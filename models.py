@@ -88,6 +88,7 @@ class Keg(Base):
     deprecated = Column(Boolean, default=False, nullable=False)
     reserved = Column(Boolean, default=False, nullable=False)
     isolated = Column(Boolean, default=False, nullable=False)
+    fermenter = Column(Boolean, default=False, nullable=False)
     photo = Column(LargeBinary)
     comment = Column(Text)
 

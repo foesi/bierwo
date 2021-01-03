@@ -13,6 +13,14 @@
         <dd class="col">{{ cleaned_kegs }}</dd>
     </div>
     <div class="col">
+        <dt class="col">Jungbier</dt>
+        <dd class="col">{{ fermenting_beer }}</dd>
+    </div>
+    <div class="col">
+        <dt class="col">leere Gärfässer</dt>
+        <dd class="col">{{ empty_fermenters }}</dd>
+    </div>
+    <div class="col">
         <dt class="col">Bier getrunken</dt>
         <dd class="col">{{ drunk_beer }}</dd>
     </div>
@@ -73,6 +81,23 @@
         <td><a href="{{ url_for(".show_keg", keg_id=keg.id) }}">{{ keg.name }}</a></td>
     </tr>
     {% endif %}
+    {% endfor %}
+</table>
+    <h3>Gärfässer</h3>
+<table class="table">
+    <thead>
+        <td>Bier</td>
+        <td>Ort</td>
+        <td>Volumen</td>
+        <td>Fass</td>
+    </thead>
+    {% for keg in fermenter %}
+    <tr>
+        <td>{{ keg|last_beer }}</td>
+        <td>{{ keg|last_location }}</td>
+        <td>{{ keg.size }}</td>
+        <td><a href="{{ url_for(".show_keg", keg_id=keg.id) }}">{{ keg.name }}</a></td>
+    </tr>
     {% endfor %}
 </table>
     <h3>Leere Fässer</h3>

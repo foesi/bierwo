@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Fass - {{ keg.name }}{% endblock %}
+{% block title %}{% if keg.fermenter %}Gärfass{% else %}Fass{% endif %} - {{ keg.name }}{% endblock %}
 {% set quicklink = url_for(".list_kegs") %}
 {% if keg|last_filling is not none %}
     {% set title = keg|last_beer %}

@@ -57,6 +57,47 @@
             <a class="btn btn-secondary" href="{{ url_for(".edit_brew", brew_id=brew.id) }}" role="button">Bearbeiten <i class="bi-gear-fill"></i></a>
             {% endif %}
         </div>
+        <div class="col-sm-4">
+            <h3>Gärfässer</h3>
+            {% if not fermenter %}
+            <form method="POST" action="{{ url_for(".fill_fermenters", brew_id=brew.id) }}">
+            <table class="table">
+                <thead>
+                    <td></td>
+                    <td>Fass</td>
+                    <td>Ort</td>
+                </thead>
+                <tbody>
+                    {% for fermenter in empty_fermenter %}
+                    <tr>
+                        <td>{% if current_user.is_authenticated %}<input id="{{ fermenter.id }}" name="{{ fermenter.id }}" type="checkbox">{% endif %}</td>
+                        <td>{{ fermenter.name }}</td>
+                        <td>{{ fermenter|last_location }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if current_user.is_authenticated %}
+            <button type="submit" class="btn btn-sm btn-secondary">Gärfässer füllen</button>
+            {% endif %}
+            </form>
+            {% else %}
+            <table class="table">
+                <thead>
+                    <td>Fass</td>
+                    <td>Ort</td>
+                </thead>
+                <tbody>
+                    {% for keg in fermenter %}
+                    <tr>
+                        <td><a href="{{ url_for(".show_keg", keg_id=keg.id) }}">{{ keg.name }}</a></td>
+                        <td>{{ keg|last_location }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
     </div>
     <div class="row p-1">
         <div class="col">
@@ -66,7 +107,7 @@
                     <td>Ort</td>
                 </thead>
                 {% for filling in brew.fillings %}
-                {% if filling.empty_date is none %}
+                {% if filling.empty_date is none and filling.keg.fermenter == False %}
                 <tr>
                     <td><a href="{{ url_for(".show_keg", keg_id=filling.keg.id) }}">{{ filling.keg.name }}</a></td>
                     <td>{{ filling.keg|last_location }}</td>

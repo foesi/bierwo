@@ -6,7 +6,7 @@ from models import engine, Keg, Brew, Filling, KegComment, BrewComment, KegFitti
 from forms import CreateKeg, CreateBrew, FillKeg, CommentKeg, CommentBrew, EditKeg, LoginForm, EditBrew
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.sql import func
-from sqlalchemy.sql.expression import true
+from sqlalchemy.sql.expression import true, false, and_, or_
 from werkzeug.utils import redirect
 from jinja2 import Template
 import qrcode
@@ -104,14 +104,25 @@ def main():
 
 @app.route("/kegs/list")
 def list_kegs():
-    kegs = session.query(Keg).all()
-    drinkable_beer = session.query(func.sum(Keg.size)).join(Filling).filter(Filling.empty_date.is_(None)).first()[0]
+    kegs = session.query(Keg).filter(Keg.fermenter == false()).all()
+    fermenter = session.query(Keg).filter(Keg.fermenter == true()).all()
+    drinkable_beer = session.query(func.sum(Keg.size)).join(Filling)\
+        .filter(and_(Filling.empty_date.is_(None), Keg.fermenter == false())).first()[0]
     drinkable_beer = 0 if drinkable_beer is None else drinkable_beer
-    drunk_beer = session.query(func.sum(Keg.size)).join(Filling).filter(Filling.empty_date.isnot(None)).first()[0]
+    drunk_beer = session.query(func.sum(Keg.size)).join(Filling)\
+        .filter(and_(Filling.empty_date.isnot(None), Keg.fermenter == false())).first()[0]
     drunk_beer = 0 if drunk_beer is None else drunk_beer
-    cleaned_kegs = session.query(func.sum(Keg.size)).filter(Keg.clean == true()).first()[0]
+    cleaned_kegs = session.query(func.sum(Keg.size))\
+        .filter(and_(Keg.clean == true(), Keg.fermenter == false())).first()[0]
     cleaned_kegs = 0 if cleaned_kegs is None else cleaned_kegs
-    return render_template("list_kegs.html", kegs=kegs, drunk_beer=drunk_beer, cleaned_kegs=cleaned_kegs, drinkable_beer=drinkable_beer)
+    empty_fermenters = session.query(func.count(Keg.id)).filter(Keg.fermenter == true()).outerjoin(Filling)\
+        .filter(or_(Filling.keg_id.is_(None), Filling.empty_date.isnot(None))).first()[0]
+    fermenting_beer = session.query(func.sum(Brew.size.distinct())).join(Filling, Keg)\
+        .filter(and_(Keg.fermenter == true(), Filling.empty_date.is_(None))).first()[0]
+    fermenting_beer = 0 if fermenting_beer is None else fermenting_beer
+    return render_template("list_kegs.html", kegs=kegs, fermenter=fermenter, drunk_beer=drunk_beer,
+                           cleaned_kegs=cleaned_kegs, drinkable_beer=drinkable_beer, empty_fermenters=empty_fermenters,
+                           fermenting_beer=fermenting_beer)
 
 
 @app.route("/kegs/show/<int:keg_id>")
@@ -155,7 +166,7 @@ def edit_keg(keg_id):
     form.type.choices = types
     if form.validate_on_submit():
         keg.isolated = form.isolated.data
-
+        keg.fermenter = form.fermenter.data
         fitting = None if form.fitting.data == "None" else KegFitting(form.fitting.data)
         keg_type = None if form.type.data == "None" else KegType(form.type.data)
         keg.fitting = fitting
@@ -175,6 +186,7 @@ def edit_keg(keg_id):
             form.type.data = keg.type
         form.comment.data = keg.comment
         form.isolated.data = keg.isolated
+        form.fermenter.data = keg.fermenter
     return render_template("edit_keg.html", form=form, keg=keg)
 
 
@@ -200,6 +212,24 @@ def create_keg_comment(keg_id):
     return render_template("create_keg_comment.html", form=form, keg_id=keg_id)
 
 
+def fill_kegs(keg_id, brew_id, filling_date):
+    keg = session.query(Keg).filter_by(id=keg_id).one()
+    new_filling = Filling()
+    new_filling.keg_id = keg_id
+    new_filling.date = filling_date
+    new_filling.brew_id = brew_id
+    keg.clean = False
+    new_comment = KegComment()
+    new_comment.location = last_location_filter(keg)
+    brew = session.query(Brew).filter_by(id=new_filling.brew_id).one()
+    new_comment.comment = "Fass mit %s gefüllt." % brew.name
+    new_comment.timestamp = datetime.datetime.now()
+    new_comment.keg_id = keg_id
+    session.add(new_filling)
+    session.add(new_comment)
+    session.commit()
+
+
 @app.route("/kegs/fill/<int:keg_id>", methods=["GET", "POST"])
 @login_required
 def fill_keg(keg_id):
@@ -212,20 +242,7 @@ def fill_keg(keg_id):
     brews = session.query(Brew).order_by(Brew.date.desc())
     form.brew_id.choices = [(b.id, "%s (%s)" % (b.name, b.date.strftime('%d.%m.%Y'))) for b in brews]
     if form.validate_on_submit():
-        new_filling = Filling()
-        new_filling.keg_id = keg_id
-        new_filling.date = form.date.data
-        new_filling.brew_id = form.brew_id.data
-        keg.clean = False
-        new_comment = KegComment()
-        new_comment.location = last_location_filter(keg)
-        brew = session.query(Brew).filter_by(id=new_filling.brew_id).one()
-        new_comment.comment = "Fass mit %s gefüllt." % brew.name
-        new_comment.timestamp = datetime.datetime.now()
-        new_comment.keg_id = keg_id
-        session.add(new_filling)
-        session.add(new_comment)
-        session.commit()
+        fill_kegs(keg_id, form.brew_id.data, form.date.data)
         flash("Fass gefüllt.")
         return redirect(url_for("show_keg", keg_id=keg_id))
     else:
@@ -313,7 +330,9 @@ def edit_brew(brew_id):
 @app.route("/brews/show/<int:brew_id>")
 def show_brew(brew_id):
     brew = session.query(Brew).filter_by(id=brew_id).one()
-    return render_template("show_brew.html", brew=brew)
+    empty_fermenter = session.query(Keg).filter(Keg.fermenter == true()).all()
+    fermenter = session.query(Keg).join(Filling).filter(and_(Keg.fermenter == true(), Filling.brew_id == brew_id)).all()
+    return render_template("show_brew.html", brew=brew, empty_fermenter=empty_fermenter, fermenter=fermenter)
 
 
 @app.route("/brews/comment/create/<int:brew_id>", methods=["GET", "POST"])
@@ -355,3 +374,12 @@ def show_photo(keg_id):
     return send_file(io.BytesIO(keg.photo),
                      attachment_filename='keg.jpg',
                      mimetype='image/jpg')
+
+
+@app.route("/brew/fermenter/fill/<int:brew_id>", methods=["POST"])
+@login_required
+def fill_fermenters(brew_id):
+    now = datetime.datetime.now()
+    for keg_id in request.form:
+        fill_kegs(int(keg_id), brew_id, now)
+    return redirect(url_for("show_brew", brew_id=brew_id))
