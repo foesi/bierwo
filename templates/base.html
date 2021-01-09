@@ -43,6 +43,9 @@
   {% for message in get_flashed_messages() %}
     <div class="alert alert-primary" role="alert">{{ message }}</div>
   {% endfor %}
+  {% if get_flashed_messages()|length == 0 %}
+    <div class="p-1"></div>
+  {% endif %}
   <div class="container">
     <div class="row">
       <div class="col">
