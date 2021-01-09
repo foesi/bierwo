@@ -7,37 +7,30 @@
 <div class="mb-3">
     {{ form.name.label(class="form-label") }}
     {{ form.name(class="form-control", disabled="true") }}
-    {{ form.name.errors }}
 </div>
 <div class="mb-3">
     {{ form.date.label(class="form-label") }}
     {{ form.date(class="form-control", disabled="true") }}
-    {{ form.date.errors }}
 </div>
 <div class="mb-3">
     {{ form.size.label(class="form-label") }}
     {{ form.size(class="form-control", disabled="true") }}
-    {{ form.size.errors }}
 </div>
 <div class="mb-3">
     {{ form.recipe.label(class="form-label") }}
     {{ form.recipe(class="form-control") }}
-    {{ form.recipe.errors }}
 </div>
     <div class="mb-3">
     {{ form.protocol.label(class="form-label") }}
     {{ form.protocol(class="form-control") }}
-    {{ form.protocol.errors }}
 </div>
     <div class="mb-3">
     {{ form.original_gravity.label(class="form-label") }}
     {{ form.original_gravity(class="form-control", step="0.1") }}
-    {{ form.original_gravity.errors }}
 </div>
 <div class="mb-3">
     {{ form.final_gravity.label(class="form-label") }}
     {{ form.final_gravity(class="form-control", step="0.1") }}
-    {{ form.final_gravity.errors }}
 </div>
     <button type="submit" class="btn btn-primary">Erstellen</button>
 </form>
