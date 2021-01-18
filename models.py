@@ -1,4 +1,4 @@
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, deferred
 from sqlalchemy import create_engine, Column, Date, Float, Integer, String, Text, ForeignKey, Enum, DateTime, Boolean, \
     LargeBinary
 from sqlalchemy.ext.declarative import declarative_base
@@ -89,7 +89,7 @@ class Keg(Base):
     reserved = Column(Boolean, default=False, nullable=False)
     isolated = Column(Boolean, default=False, nullable=False)
     fermenter = Column(Boolean, default=False, nullable=False)
-    photo = Column(LargeBinary)
+    photo = deferred(Column(LargeBinary))
     comment = Column(Text)
 
     keg_comments = relationship("KegComment")
