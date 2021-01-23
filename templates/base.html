@@ -8,13 +8,14 @@
     <!-- Bootstrap CSS -->
         <link href="{{ url_for("static", filename="css/bootstrap.min.css") }}" rel="stylesheet">
         <link href="{{ url_for("static", filename="css/bootstrap-icons/font/bootstrap-icons.css") }}" rel="stylesheet">
+        <link rel="shortcut icon" href="{{ url_for("static", filename="favicon.ico") }}">
 
     <title>BierWo?{% if title is defined %} - {{ title }}{% endif %}</title>
   </head>
   <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">BierWo?</a>
+    <a class="navbar-brand" href="#"><img src="{{ url_for("static", filename="beer_pixel.png") }}" alt="" width="50" height="40">BierWo?</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
