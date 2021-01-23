@@ -6,7 +6,7 @@ from models import engine, Keg, Brew, Filling, KegComment, BrewComment, KegFitti
 from forms import CreateKeg, CreateBrew, FillKeg, CommentKeg, CommentBrew, EditKeg, LoginForm, EditBrew
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.sql import func
-from sqlalchemy.sql.expression import true, false, and_, or_
+from sqlalchemy.sql.expression import true, false, and_, or_, desc
 from werkzeug.utils import redirect
 from jinja2 import Template
 import qrcode
@@ -309,7 +309,7 @@ def clean_keg(keg_id):
 
 @app.route("/brews")
 def list_brews():
-    brews = session.query(Brew).all()
+    brews = session.query(Brew).order_by(desc(Brew.date)).all()
     return render_template("list_brews.html", brews=brews)
 
 
