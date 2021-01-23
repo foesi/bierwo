@@ -121,13 +121,16 @@ def list_kegs():
     cleaned_kegs = session.query(func.sum(Keg.size))\
         .filter(and_(Keg.clean == true(), Keg.fermenter == false())).first()[0]
     cleaned_kegs = 0 if cleaned_kegs is None else cleaned_kegs
-    empty_fermenters = session.query(func.count(Keg.id)).filter(Keg.fermenter == true()).outerjoin(Filling)\
-        .filter(or_(Filling.keg_id.is_(None), Filling.empty_date.isnot(None))).first()[0]
+    latest_filling = session.query(Filling.keg_id.label('keg_id'), func.max(Filling.id).label('max_id')).group_by(Filling.keg_id).subquery()
+    empty_fermenter = session.query(Keg).filter(Keg.fermenter == true(), Keg.deprecated == false())\
+        .outerjoin(latest_filling, Keg.id == latest_filling.c.keg_id)\
+        .outerjoin(Filling, latest_filling.c.max_id == Filling.id)\
+        .filter(or_(Filling.keg_id.is_(None), Filling.empty_date.isnot(None))).count()
     fermenting_beer = session.query(Brew.id, Brew.size).join(Filling, Keg)\
         .filter(and_(Keg.fermenter == true(), Filling.empty_date.is_(None))).group_by(Brew.id).all()
     fermenting_beer = 0 if len(fermenting_beer) == 0 else sum([i[1] for i in fermenting_beer])
     return render_template("list_kegs.html", kegs=kegs, fermenter=fermenter, drunk_beer=drunk_beer,
-                           cleaned_kegs=cleaned_kegs, drinkable_beer=drinkable_beer, empty_fermenters=empty_fermenters,
+                           cleaned_kegs=cleaned_kegs, drinkable_beer=drinkable_beer, empty_fermenters=empty_fermenter,
                            fermenting_beer=fermenting_beer, deprecated_kegs=deprecated_kegs)
 
 
@@ -351,8 +354,10 @@ def edit_brew(brew_id):
 @app.route("/brews/show/<int:brew_id>")
 def show_brew(brew_id):
     brew = session.query(Brew).filter_by(id=brew_id).one()
-    empty_fermenter = session.query(Keg).filter(and_(Keg.fermenter == true(), Keg.deprecated == false()))\
-        .outerjoin(Filling)\
+    latest_filling = session.query(Filling.keg_id.label('keg_id'), func.max(Filling.id).label('max_id')).group_by(Filling.keg_id).subquery()
+    empty_fermenter = session.query(Keg).filter(Keg.fermenter == true(), Keg.deprecated == false()) \
+        .outerjoin(latest_filling, Keg.id == latest_filling.c.keg_id) \
+        .outerjoin(Filling, latest_filling.c.max_id == Filling.id) \
         .filter(or_(Filling.keg_id.is_(None), Filling.empty_date.isnot(None))).all()
     fermenter = session.query(Keg).join(Filling).filter(and_(Keg.fermenter == true(), Filling.brew_id == brew_id)).all()
     return render_template("show_brew.html", brew=brew, empty_fermenter=empty_fermenter, fermenter=fermenter)
