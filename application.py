@@ -181,7 +181,8 @@ def edit_keg(keg_id):
         keg.comment = form.comment.data
         if form.image.data is not None:
             image_data = request.files[form.image.name].read()
-            keg.photo = image_data
+            if len(image_data) > 0:
+                keg.photo = image_data
         session.commit()
         return redirect(url_for("list_kegs"))
     else:
