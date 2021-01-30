@@ -206,6 +206,9 @@ def edit_keg(keg_id):
 @login_required
 def create_keg_comment(keg_id):
     form = CommentKeg()
+    locations = [i[0] for i in
+                 session.query(KegComment.location).group_by(KegComment.location).order_by(KegComment.location).all()]
+    form.location.choices = locations
     if form.validate_on_submit():
         new_comment = KegComment()
         new_comment.location = form.location.data

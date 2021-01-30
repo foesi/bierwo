@@ -45,7 +45,7 @@ class FillKeg(FlaskForm):
 
 
 class CommentKeg(FlaskForm):
-    location = StringField(u"Ort")
+    location = SelectField(u"Ort", validate_choice=False)
     comment = TextAreaField(u"Kommentar")
     reserved = BooleanField("Reserviert")
 

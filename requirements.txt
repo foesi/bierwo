@@ -7,3 +7,4 @@ pillow
 psycopg2
 gunicorn
 flask-login==0.4.1
+WTForms==2.3.3
