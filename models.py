@@ -80,7 +80,7 @@ class Keg(Base):
     __tablename__ = 'kegs'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String, unique=True, nullable=False)
+    name = Column(String, nullable=False)
     type = Column(Enum(KegType))
     fitting = Column(Enum(KegFitting))
     size = Column(Integer, nullable=False)
@@ -94,6 +94,9 @@ class Keg(Base):
 
     keg_comments = relationship("KegComment")
     fillings = relationship("Filling")
+
+    def __str__(self):
+        return f'{self.id} - {self.name}'
 
 
 class KegComment(Base):

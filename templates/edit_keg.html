@@ -6,11 +6,11 @@
     {{ form.csrf_token }}
 <div class="mb-3">
     {{ form.name.label(class="form-label") }}
-    {{ form.name(class="form-control", disabled="true") }}
+    {{ form.name() }}
 </div>
 <div class="mb-3">
     {{ form.size.label(class="form-label") }}
-    {{ form.size(class="form-control", disabled="true") }}
+    {{ form.size() }}
 </div>
 <div class="mb-3">
     {{ form.deprecated.label(class="form-label") }}

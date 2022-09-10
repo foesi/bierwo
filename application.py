@@ -174,6 +174,8 @@ def edit_keg(keg_id):
     types.extend([(i.value, i.value) for i in KegType])
     form.type.choices = types
     if form.validate_on_submit():
+        keg.name = form.name.data
+        keg.size = form.size.data
         keg.isolated = form.isolated.data
         keg.fermenter = form.fermenter.data
         keg.deprecated = form.deprecated.data

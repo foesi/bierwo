@@ -90,7 +90,7 @@
                 <tbody>
                     {% for keg in fermenter %}
                     <tr>
-                        <td><a href="{{ url_for(".show_keg", keg_id=keg.id) }}">{{ keg.name }}</a></td>
+                        <td><a href="{{ url_for(".show_keg", keg_id=keg.id) }}">{{ keg }}</a></td>
                         <td>{{ keg|last_location }}</td>
                     </tr>
                     {% endfor %}
@@ -109,7 +109,7 @@
                 {% for filling in brew.fillings %}
                 {% if filling.empty_date is none and filling.keg.fermenter == False %}
                 <tr>
-                    <td><a href="{{ url_for(".show_keg", keg_id=filling.keg.id) }}">{{ filling.keg.name }}</a></td>
+                    <td><a href="{{ url_for(".show_keg", keg_id=filling.keg.id) }}">{{ filling.keg }}</a></td>
                     <td>{{ filling.keg|last_location }}</td>
                 </tr>
                 {% endif %}

@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}{% if keg.fermenter %}Gärfass{% else %}Fass{% endif %} - {{ keg.name }}{% endblock %}
+{% block title %}{% if keg.fermenter %}Gärfass{% else %}Fass{% endif %} - {{ keg }}{% endblock %}
 {% set quicklink = url_for(".list_kegs") %}
 {% if keg|last_filling is not none %}
     {% set title = keg|last_beer %}
 {% else %}
-    {% set title = keg.name %}
+    {% set title = keg %}
 {% endif %}
 {% block content %}
 <div class="container">
@@ -39,7 +39,7 @@
                 </div>
                 <div class="row">
                     <dt class="col-sm-2">Name</dt>
-                    <dd class="col-sm-4">{{ keg.name }}</dd>
+                    <dd class="col-sm-4">{{ keg }}</dd>
                 </div>
                 <div class="row">
                     <dt class="col-sm-2">Volumen</dt>
@@ -68,12 +68,12 @@
         </div>
         <div class="col-sm-3">
             {% if keg.photo is none %}
-                <div class="row"><img src="{{ url_for("static", filename="qrcodes/"+ keg.id|string + ".jpg") }}" class="img-fluid rounded" alt="QR Code für Fass {{ keg.name }}"></div>
+                <div class="row"><img src="{{ url_for("static", filename="qrcodes/"+ keg.id|string + ".jpg") }}" class="img-fluid rounded" alt="QR Code für Fass {{ keg }}"></div>
                 {% if current_user.is_authenticated %}
                 <div class="row" style="float: center"><a class="btn btn-secondary btn-sm" href="{{ url_for(".regenerate_qrcode", keg_id=keg.id) }}" role="button">QRCode generieren</a></div>
                 {% endif %}
             {% else %}
-                <img src="{{ url_for(".show_photo", keg_id=keg.id) }}" class="img-fluid rounded" alt="Photo für Fass {{ keg.name }}">
+                <img src="{{ url_for(".show_photo", keg_id=keg.id) }}" class="img-fluid rounded" alt="Photo für Fass {{ keg }}">
             {% endif %}
         </div>
     </div>
