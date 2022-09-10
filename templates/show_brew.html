@@ -13,36 +13,36 @@
         <div class="col-sm-8">
             <dl class="row">
                 <div class="row">
-                    <dt class="col-sm-2">Name</dt>
+                    <dt class="col-sm-3">Name</dt>
                     <dd class="col-sm-4">{{ brew.name }}</dd>
                 </div>
                 <div class="row">
-                    <dt class="col-sm-2">Brautag</dt>
+                    <dt class="col-sm-3">Brautag</dt>
                     <dd class="col-sm-4">{{ brew.date.strftime('%d.%m.%Y') }}</dd>
                 </div>
                 <div class="row">
-                    <dt class="col-sm-2">Informationen</dt>
+                    <dt class="col-sm-3">Informationen</dt>
                     <dd class="col-sm-4">{% if brew.comment is not none %}{{ brew.comment }}{% endif %}</dd>
                 </div>
                 <div class="row">
-                    <dt class="col-sm-2">Ausschlagmenge</dt>
+                    <dt class="col-sm-3">Ausschlagmenge</dt>
                     <dd class="col-sm-4">{{ brew.size }}</dd>
                 </div>
                 {% if brew.recipe is not none %}
                 <div class="row">
-                    <dt class="col-sm-2">Rezept</dt>
+                    <dt class="col-sm-3">Rezept</dt>
                     <dd class="col-sm-4"><a href="{{ brew.recipe }}">MaischeMalzndMehr</a></dd>
                 </div>
                 {% endif %}
                 {% if brew.protocol is not none %}
                 <div class="row">
-                    <dt class="col-sm-2">Brauprotokoll</dt>
+                    <dt class="col-sm-3">Brauprotokoll</dt>
                     <dd class="col-sm-4">vorhanden</dd>
                 </div>
                 {% endif %}
                 {% if brew.original_gravity is not none %}
                 <div class="row">
-                    <dt class="col-sm-2">Stammwürze</dt>
+                    <dt class="col-sm-3">Stammwürze</dt>
                     <dd class="col-sm-4">{{ brew.original_gravity }}</dd>
                 </div>
                 {% endif %}
