@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, TextAreaField, BooleanField, FileField, PasswordField
+from wtforms import SelectField, TextAreaField, BooleanField, FileField, PasswordField
 from wtforms.validators import optional
-from wtforms.fields.html5 import IntegerField, DateField, URLField, DecimalField
+from wtforms.fields import IntegerField, DateField, DecimalField, URLField, StringField
 
 __author__ = 'Florian Österreich'
 
