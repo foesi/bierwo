@@ -104,7 +104,7 @@ def check_deprecated(keg_id):
 
 @app.route("/")
 def main():
-    return render_template("base.html", title="BierWo?")
+    return redirect(url_for('list_kegs'))
 
 
 @app.route("/kegs/list")
