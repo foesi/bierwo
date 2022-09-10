@@ -17,6 +17,8 @@ class CreateKeg(FlaskForm):
 
 
 class EditKeg(CreateKeg):
+    name = StringField('Name')
+    size = IntegerField('Fassungsvermögen')
     type = SelectField(u"Typ")
     fitting = SelectField(u"Fitting")
     deprecated = BooleanField(u"Ausgemustert")
