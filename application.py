@@ -226,7 +226,7 @@ def create_keg_comment(keg_id):
         keg.reserved = form.reserved.data
         session.add(new_comment)
         session.commit()
-        return redirect(url_for("show_keg", keg_id=keg_id))
+        return redirect(url_for("show_keg", keg_id=keg.url_id))
     else:
         keg = session.query(Keg).filter_by(id=keg_id).one()
         form.location.data = last_location_filter(keg)
@@ -270,7 +270,7 @@ def fill_keg(keg_id):
         fill_kegs(keg_id, form.brew_id.data, form.date.data)
         session.commit()
         flash("Fass gefüllt.")
-        return redirect(url_for("show_keg", keg_id=keg_id))
+        return redirect(url_for("show_keg", keg_id=keg.url_id))
     else:
         form.date.data = datetime.datetime.now()
     return render_template("fill_keg.html", form=form, keg_id=keg_id)
@@ -294,7 +294,7 @@ def empty_keg(keg_id):
     keg.reserved = False
     session.add(new_comment)
     session.commit()
-    return redirect(url_for("show_keg", keg_id=keg_id))
+    return redirect(url_for("show_keg", keg_id=keg.url_id))
 
 
 @app.route("/kegs/clean/<int:keg_id>")
@@ -314,7 +314,7 @@ def clean_keg(keg_id):
     session.add(new_comment)
     session.commit()
     flash("Fass gereinigt.")
-    return redirect(url_for("show_keg", keg_id=keg_id))
+    return redirect(url_for("show_keg", keg_id=keg.url_id))
 
 
 @app.route("/brews")
