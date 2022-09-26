@@ -97,7 +97,7 @@ class Keg(Base):
     fillings = relationship("Filling")
 
     def __str__(self):
-        return f'{self.id} - {self.name}'
+        return f'{self.url_id} - {self.name}'
 
 
 class KegComment(Base):
