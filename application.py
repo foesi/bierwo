@@ -136,7 +136,7 @@ def list_kegs():
 
 @app.route("/kegs/show/<int:keg_id>")
 def show_keg(keg_id):
-    keg = session.query(Keg).filter_by(id=keg_id).one()
+    keg = session.query(Keg).filter_by(url_id=keg_id).one()
     return render_template("show_keg.html", keg=keg)
 
 
@@ -158,6 +158,7 @@ def create_keg():
         session.add(new_keg)
         session.commit()
         generate_qrcode(new_keg.id)
+        new_keg.url_id = new_keg.id
         return redirect(url_for("list_kegs"))
     return render_template("create_keg.html", form=form)
 
@@ -173,7 +174,9 @@ def edit_keg(keg_id):
     types = [(None, "")]
     types.extend([(i.value, i.value) for i in KegType])
     form.type.choices = types
+    form.id.data = keg.id
     if form.validate_on_submit():
+        keg.url_id = form.url_id.data
         keg.name = form.name.data
         keg.size = form.size.data
         keg.isolated = form.isolated.data
@@ -191,6 +194,7 @@ def edit_keg(keg_id):
         session.commit()
         return redirect(url_for("list_kegs"))
     else:
+        form.url_id.data = keg.url_id
         form.name.data = keg.name
         form.size.data = keg.size
         if keg.fitting is not None:

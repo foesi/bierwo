@@ -41,7 +41,7 @@
         <td>{{ keg|last_beer }}</td>
         <td>{{ keg.size }}</td>
         <td>{{ keg|last_location }}</td>
-        <td><a href="{{ url_for(".show_keg", keg_id=keg.id) }}">{{ keg }}</a></td>
+        <td><a href="{{ url_for(".show_keg", keg_id=keg.url_id) }}">{{ keg }}</a></td>
     </tr>
     {% endif %}
     {% endfor %}
@@ -60,7 +60,7 @@
         <td>{{ keg|last_beer }}</td>
         <td>{{ keg.size }}</td>
         <td>{{ keg|last_location }}</td>
-        <td><a href="{{ url_for(".show_keg", keg_id=keg.id) }}">{{ keg }}</a></td>
+        <td><a href="{{ url_for(".show_keg", keg_id=keg.url_id) }}">{{ keg }}</a></td>
     </tr>
     {% endif %}
     {% endfor %}
@@ -78,7 +78,7 @@
     <tr>
         <td>{{ keg.size }}</td>
         <td>{{ keg|last_location }}</td>
-        <td><a href="{{ url_for(".show_keg", keg_id=keg.id) }}">{{ keg }}</a></td>
+        <td><a href="{{ url_for(".show_keg", keg_id=keg.url_id) }}">{{ keg }}</a></td>
     </tr>
     {% endif %}
     {% endfor %}
@@ -96,7 +96,7 @@
         <td>{{ keg|last_beer }}</td>
         <td>{{ keg|last_location }}</td>
         <td>{{ keg.size }}</td>
-        <td><a href="{{ url_for(".show_keg", keg_id=keg.id) }}">{{ keg }}</a></td>
+        <td><a href="{{ url_for(".show_keg", keg_id=keg.url_id) }}">{{ keg }}</a></td>
     </tr>
     {% endfor %}
 </table>
@@ -112,7 +112,7 @@
     <tr>
         <td>{{ keg.size }}</td>
         <td>{{ keg|last_location }}</td>
-        <td><a href="{{ url_for(".show_keg", keg_id=keg.id) }}">{{ keg }}</a></td>
+        <td><a href="{{ url_for(".show_keg", keg_id=keg.url_id) }}">{{ keg }}</a></td>
     </tr>
     {% endif %}
     {% endfor %}
@@ -126,7 +126,7 @@
     {% for keg in deprecated_kegs %}
     <tr>
         <td>{{ keg.size }}</td>
-        <td><a href="{{ url_for(".show_keg", keg_id=keg.id) }}">{{ keg }}</a></td>
+        <td><a href="{{ url_for(".show_keg", keg_id=keg.url_id) }}">{{ keg }}</a></td>
     </tr>
     {% endfor %}
 </table>

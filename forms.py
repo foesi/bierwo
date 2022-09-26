@@ -1,9 +1,28 @@
+from models import Keg
+
 from flask_wtf import FlaskForm
-from wtforms import SelectField, TextAreaField, BooleanField, FileField, PasswordField
-from wtforms.validators import optional
+from wtforms import SelectField, TextAreaField, BooleanField, FileField, PasswordField, HiddenField
+from wtforms.validators import optional, DataRequired, ValidationError
 from wtforms.fields import IntegerField, DateField, DecimalField, URLField, StringField
 
 __author__ = 'Florian Österreich'
+
+
+class Unique:
+    def __init__(self, get_value):
+        self.get_value = get_value
+
+    def __call__(self, form, field):
+        from application import session
+        keg = session.query(Keg).filter_by(id=form.id.data).one()
+        possible_duplicate = self.get_value(field.data)
+        if possible_duplicate and keg != possible_duplicate:
+            raise ValidationError('Bereits vergeben.')
+
+
+def check_url_id(id):
+    from application import session
+    return session.query(Keg).filter_by(url_id=id).first()
 
 
 class LoginForm(FlaskForm):
@@ -17,6 +36,8 @@ class CreateKeg(FlaskForm):
 
 
 class EditKeg(CreateKeg):
+    id = HiddenField()
+    url_id = IntegerField('QR Nummer', validators=[DataRequired(), Unique(check_url_id)])
     name = StringField('Name')
     size = IntegerField('Fassungsvermögen')
     type = SelectField(u"Typ")

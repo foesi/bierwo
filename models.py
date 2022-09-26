@@ -80,6 +80,7 @@ class Keg(Base):
     __tablename__ = 'kegs'
 
     id = Column(Integer, primary_key=True)
+    url_id = Column(Integer, unique=True, nullable=False)
     name = Column(String, nullable=False)
     type = Column(Enum(KegType))
     fitting = Column(Enum(KegFitting))
