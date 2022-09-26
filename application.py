@@ -159,6 +159,7 @@ def create_keg():
         session.commit()
         generate_qrcode(new_keg.id)
         new_keg.url_id = new_keg.id
+        session.commit()
         return redirect(url_for("list_kegs"))
     return render_template("create_keg.html", form=form)
 
